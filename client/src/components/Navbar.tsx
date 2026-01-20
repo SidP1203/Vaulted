@@ -33,10 +33,10 @@ export function Navbar() {
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <span className="font-display font-bold text-white text-xl">W</span>
+            <span className="font-display font-bold text-white text-xl">V</span>
           </div>
           <span className="font-display font-bold text-xl tracking-tight text-white">
-            WebCreators<span className="text-primary">.</span>
+            Vaunt<span className="text-primary">.</span>
           </span>
         </div>
 

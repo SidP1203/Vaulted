@@ -62,7 +62,7 @@ export default function Home() {
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
             <div className="inline-block px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-6">
-              <span className="text-primary font-semibold text-sm tracking-wide uppercase">Premium Web Development Agency</span>
+              <span className="text-primary font-semibold text-sm tracking-wide uppercase">Vaunt Web Solutions</span>
             </div>
             <h1 className="text-5xl md:text-7xl font-display font-bold leading-[1.1] mb-8">
               We Build <br />
@@ -289,15 +289,15 @@ export default function Home() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                <span className="font-display font-bold text-white text-xl">W</span>
+                <span className="font-display font-bold text-white text-xl">V</span>
               </div>
               <span className="font-display font-bold text-xl tracking-tight text-white">
-                WebCreators<span className="text-primary">.</span>
+                Vaunt<span className="text-primary">.</span>
               </span>
             </div>
             
             <p className="text-muted-foreground text-sm">
-              © {new Date().getFullYear()} CSEL Cincy / WebCreators. All rights reserved.
+              © {new Date().getFullYear()} Vaunt Web Solutions. All rights reserved.
             </p>
 
             <div className="flex gap-6">
