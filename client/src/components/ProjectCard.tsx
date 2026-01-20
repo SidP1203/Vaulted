@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ExternalLink, ArrowRight } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import type { Project } from "@shared/schema";
 
 interface ProjectCardProps {
@@ -9,48 +9,37 @@ interface ProjectCardProps {
 
 export function ProjectCard({ project, index }: ProjectCardProps) {
   return (
-    <motion.div
+    <motion.a
+      href={project.link}
+      target="_blank"
+      rel="noopener noreferrer"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
       viewport={{ once: true }}
-      className="group relative rounded-2xl overflow-hidden bg-card border border-white/5"
+      transition={{ delay: index * 0.1 }}
+      className="group block"
+      data-testid={`card-project-${project.id}`}
     >
-      {/* Image Container */}
-      <div className="aspect-[4/3] overflow-hidden relative">
-        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors z-10" />
-        <img 
-          src={project.imageUrl} 
+      <div className="relative aspect-[4/3] overflow-hidden bg-muted mb-4">
+        <img
+          src={project.imageUrl}
           alt={project.title}
-          className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        
-        {/* Featured Tag */}
+        <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/5 transition-colors" />
         {project.isFeatured && (
-          <div className="absolute top-4 right-4 z-20 px-3 py-1 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-full shadow-lg">
+          <div className="absolute top-4 left-4 bg-background text-foreground text-xs tracking-wider uppercase px-3 py-1">
             Featured
           </div>
         )}
       </div>
-
-      {/* Content */}
-      <div className="p-6 relative">
-        <h3 className="text-2xl font-display font-bold text-white mb-2 group-hover:text-primary transition-colors">
-          {project.title}
-        </h3>
-        <p className="text-muted-foreground mb-6 line-clamp-2">
-          {project.description}
-        </p>
-        
-        <a 
-          href={project.link}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-primary transition-colors"
-        >
-          View Live Project <ArrowRight size={16} />
-        </a>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h3 className="font-display text-xl mb-1 group-hover:underline underline-offset-4">{project.title}</h3>
+          <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">{project.description}</p>
+        </div>
+        <ExternalLink className="w-4 h-4 shrink-0 text-muted-foreground group-hover:text-foreground transition-colors mt-1" />
       </div>
-    </motion.div>
+    </motion.a>
   );
 }

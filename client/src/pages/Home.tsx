@@ -1,172 +1,179 @@
-import { useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
-import { ServiceCard } from "@/components/ServiceCard";
-import { ProjectCard } from "@/components/ProjectCard";
 import { ContactForm } from "@/components/ContactForm";
+import { ProjectCard } from "@/components/ProjectCard";
 import { useProjects } from "@/hooks/use-projects";
 import { motion } from "framer-motion";
 import { 
-  Monitor, 
-  Smartphone, 
-  Search, 
-  BarChart, 
-  Code, 
-  Palette,
+  Code2, 
+  Shield, 
+  Clock, 
+  Zap,
   ArrowRight,
-  CheckCircle2,
+  CheckCircle,
   ExternalLink
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-// Static content
 const services = [
   {
-    icon: Monitor,
-    title: "Web Design",
-    description: "Stunning, high-converting websites crafted to tell your brand's unique story and engage your audience."
+    icon: Code2,
+    title: "Hand-Written Code",
+    description: "Every line of code is crafted by hand. No templates, no shortcuts—just clean, semantic, and maintainable code built specifically for your needs."
   },
   {
-    icon: Smartphone,
-    title: "Responsive Dev",
-    description: "Flawless experiences across all devices. Mobile-first development ensures you reach customers everywhere."
+    icon: Shield,
+    title: "100% Secure",
+    description: "Security isn't an afterthought. We implement industry-standard security practices from day one, protecting your business and your customers."
   },
   {
-    icon: Search,
-    title: "SEO Optimization",
-    description: "Rank higher on Google. We build with technical SEO best practices to drive organic traffic to your site."
+    icon: Zap,
+    title: "Performance First",
+    description: "Lightning-fast load times and optimized performance. Your site will score high on Core Web Vitals and provide an exceptional user experience."
   },
   {
-    icon: Palette,
-    title: "Branding",
-    description: "Complete visual identity systems including logos, typography, and color palettes that stand out."
+    icon: Clock,
+    title: "Ongoing Support",
+    description: "We don't disappear after launch. Continuous maintenance, updates, and support ensure your website stays modern and secure."
   }
+];
+
+const pricingFeatures = [
+  "Custom hand-written code",
+  "Responsive design for all devices",
+  "SEO optimization included",
+  "Security best practices",
+  "Performance optimization",
+  "Post-launch support"
 ];
 
 export default function Home() {
   const { data: projects, isLoading } = useProjects();
 
+  const fadeIn = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6 }
+  };
+
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
+    <div className="min-h-screen bg-background text-foreground">
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center pt-20 px-4">
-        {/* Background Effects */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 blur-[120px] rounded-full opacity-50 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/10 blur-[120px] rounded-full opacity-50 pointer-events-none" />
-
-        <div className="container mx-auto grid lg:grid-cols-2 gap-12 items-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
-            <div className="inline-block px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-6">
-              <span className="text-primary font-semibold text-sm tracking-wide uppercase">Vaunt Web Solutions</span>
-            </div>
-            <h1 className="text-5xl md:text-7xl font-display font-bold leading-[1.1] mb-8">
-              We Build <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-white/50">Digital Experiences</span>
-              <br /> That <span className="text-primary">Matter.</span>
-            </h1>
-            <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-lg leading-relaxed">
-              Transform your business with a website that converts. We blend aesthetic excellence with technical precision.
+      <section className="min-h-screen flex items-center justify-center px-6 pt-24 pb-16">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.div {...fadeIn}>
+            <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground mb-8">
+              Web Development Studio
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
+            <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-normal leading-[1.1] mb-8 tracking-tight">
+              Websites that work
+              <br />
+              <span className="italic">as hard as you do</span>
+            </h1>
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-12 leading-relaxed">
+              Hand-crafted, secure, and built to perform. We create websites that 
+              elevate your brand and drive real business results.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
+                size="lg"
                 onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-                className="h-14 px-8 rounded-full bg-primary hover:bg-primary/90 text-white text-lg font-semibold shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all"
+                className="h-14 px-10 text-base rounded-none"
+                data-testid="button-start-project"
               >
                 Start Your Project
               </Button>
               <Button 
                 variant="outline"
-                onClick={() => document.getElementById('portfolio')?.scrollIntoView({ behavior: 'smooth' })}
-                className="h-14 px-8 rounded-full border-white/10 hover:bg-white/5 text-white text-lg font-semibold"
+                size="lg"
+                onClick={() => document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' })}
+                className="h-14 px-10 text-base rounded-none border-foreground/20 hover:bg-foreground/5"
+                data-testid="button-view-work"
               >
-                View Portfolio
+                View Our Work
               </Button>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative hidden lg:block"
-          >
-            {/* Abstract Hero Graphic */}
-            <div className="relative z-10 grid grid-cols-2 gap-4">
-              <div className="space-y-4 mt-12">
-                {/* Hero scenic workspace */}
-                <img 
-                  src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80"
-                  alt="Development Workspace"
-                  className="rounded-2xl shadow-2xl border border-white/10 w-full h-64 object-cover"
-                />
-                {/* Hero abstract geometric */}
-                <img 
-                  src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80"
-                  alt="Technology"
-                  className="rounded-2xl shadow-2xl border border-white/10 w-full h-48 object-cover"
-                />
-              </div>
-              <div className="space-y-4">
-                {/* Hero coding screen */}
-                <img 
-                  src="https://images.unsplash.com/photo-1555099962-4199c345e5dd?auto=format&fit=crop&w=800&q=80"
-                  alt="Code"
-                  className="rounded-2xl shadow-2xl border border-white/10 w-full h-48 object-cover"
-                />
-                {/* Hero design meeting */}
-                <img 
-                  src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=800&q=80"
-                  alt="Team"
-                  className="rounded-2xl shadow-2xl border border-white/10 w-full h-64 object-cover"
-                />
-              </div>
             </div>
           </motion.div>
         </div>
       </section>
 
+      {/* Trust Indicators */}
+      <section className="py-16 border-y border-border">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            {[
+              { label: "Hand-Written", value: "100%" },
+              { label: "Secure Code", value: "100%" },
+              { label: "Client Satisfaction", value: "100%" },
+              { label: "On-Time Delivery", value: "100%" }
+            ].map((stat, idx) => (
+              <motion.div 
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+              >
+                <p className="font-display text-4xl md:text-5xl mb-2">{stat.value}</p>
+                <p className="text-sm text-muted-foreground tracking-wide uppercase">{stat.label}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Services Section */}
-      <section id="services" className="py-24 bg-card/30 relative">
-        <div className="container mx-auto px-4">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-5xl font-display font-bold mb-6">Our Expertise</h2>
-            <p className="text-muted-foreground text-lg">
-              Comprehensive digital solutions tailored to help your business grow and succeed in the modern web landscape.
+      <section id="services" className="py-24 md:py-32">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="max-w-2xl mb-16">
+            <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">What We Do</p>
+            <h2 className="font-display text-4xl md:text-5xl mb-6">Crafted with care, built to last</h2>
+            <p className="text-muted-foreground text-lg leading-relaxed">
+              We believe in doing things right. Every project is approached with meticulous 
+              attention to detail and a commitment to excellence.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 gap-8 md:gap-12">
             {services.map((service, idx) => (
-              <ServiceCard key={idx} index={idx} {...service} />
+              <motion.div 
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+                className="group"
+              >
+                <div className="flex gap-6">
+                  <div className="w-12 h-12 rounded-full border border-border flex items-center justify-center shrink-0 group-hover:border-foreground/30 transition-colors">
+                    <service.icon className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-display text-xl mb-3">{service.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed">{service.description}</p>
+                  </div>
+                </div>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
       {/* Portfolio Section */}
-      <section id="portfolio" className="py-24 relative overflow-hidden">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+      <section id="work" className="py-24 md:py-32 bg-card">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
             <div className="max-w-2xl">
-              <h2 className="text-3xl md:text-5xl font-display font-bold mb-6">Selected Works</h2>
-              <p className="text-muted-foreground text-lg">
-                Explore our portfolio of successful projects. From non-profits to enterprise solutions.
-              </p>
+              <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">Selected Work</p>
+              <h2 className="font-display text-4xl md:text-5xl">Projects we're proud of</h2>
             </div>
-            <a href="#" className="text-primary hover:text-primary/80 font-semibold flex items-center gap-2 transition-colors">
-              View All Projects <ArrowRight size={20} />
-            </a>
           </div>
 
           {isLoading ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="bg-card rounded-2xl h-[400px] animate-pulse border border-white/5" />
+                <div key={i} className="aspect-[4/3] bg-muted animate-pulse" />
               ))}
             </div>
           ) : (
@@ -174,71 +181,100 @@ export default function Home() {
               {projects?.map((project, idx) => (
                 <ProjectCard key={project.id} project={project} index={idx} />
               ))}
-              
-              {/* Fallback hardcoded item if DB is empty to show the style */}
-              {(!projects || projects.length === 0) && (
-                <>
-                  <ProjectCard 
-                    index={0}
-                    project={{
-                      id: 999,
-                      title: "CSEL Cincinnati",
-                      description: "A comprehensive platform for the Center for Social-Emotional Learning, featuring resource libraries and event management.",
-                      imageUrl: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=800&q=80",
-                      link: "https://cselcincy.org",
-                      isFeatured: true
-                    }} 
-                  />
-                  <ProjectCard 
-                    index={1}
-                    project={{
-                      id: 998,
-                      title: "TechFlow Dashboard",
-                      description: "Modern analytics dashboard for a SaaS platform with real-time data visualization.",
-                      imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
-                      link: "#",
-                      isFeatured: false
-                    }} 
-                  />
-                </>
-              )}
             </div>
           )}
         </div>
       </section>
 
-      {/* Process Section */}
-      <section id="process" className="py-24 bg-card/30">
-        <div className="container mx-auto px-4">
+      {/* Pricing Section */}
+      <section id="pricing" className="py-24 md:py-32">
+        <div className="max-w-6xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-3xl md:text-5xl font-display font-bold mb-8">How We Work</h2>
-              <div className="space-y-8">
-                {[
-                  { title: "Discovery & Strategy", desc: "We start by understanding your goals, audience, and market position." },
-                  { title: "Design & Prototyping", desc: "Creating visual concepts and interactive prototypes for your approval." },
-                  { title: "Development", desc: "Writing clean, efficient code to bring the designs to life." },
-                  { title: "Launch & Support", desc: "Deploying your site and providing ongoing maintenance and updates." }
-                ].map((step, idx) => (
-                  <div key={idx} className="flex gap-4">
-                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20">
-                      <span className="font-display font-bold text-primary text-xl">{idx + 1}</span>
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-white mb-2">{step.title}</h3>
-                      <p className="text-muted-foreground">{step.desc}</p>
-                    </div>
-                  </div>
-                ))}
+              <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">Pricing</p>
+              <h2 className="font-display text-4xl md:text-5xl mb-6">Transparent, honest pricing</h2>
+              <p className="text-muted-foreground text-lg leading-relaxed mb-8">
+                No hidden fees, no surprises. We charge based on the scope and complexity 
+                of your project, ensuring you get exactly what you need.
+              </p>
+              
+              <div className="border border-border p-8 mb-8">
+                <div className="flex items-baseline gap-2 mb-2">
+                  <span className="font-display text-5xl md:text-6xl">$35–50</span>
+                  <span className="text-muted-foreground">/hour</span>
+                </div>
+                <p className="text-muted-foreground mb-6">
+                  Depending on project scope, timeline, and complexity
+                </p>
+                <ul className="space-y-3">
+                  {pricingFeatures.map((feature, idx) => (
+                    <li key={idx} className="flex items-center gap-3">
+                      <CheckCircle className="w-4 h-4 text-foreground" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <Button 
+                size="lg"
+                onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+                className="h-14 px-10 text-base rounded-none"
+                data-testid="button-get-quote"
+              >
+                Get a Free Quote <ArrowRight className="ml-2 w-4 h-4" />
+              </Button>
+            </div>
+
+            <div className="relative">
+              <div className="aspect-square bg-card border border-border p-8 md:p-12 flex flex-col justify-center">
+                <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground mb-6">Why Hand-Written Code?</p>
+                <ul className="space-y-6">
+                  {[
+                    { title: "No Bloat", desc: "Clean code means faster load times and better performance" },
+                    { title: "Full Control", desc: "Every feature is built to your exact specifications" },
+                    { title: "Easy Maintenance", desc: "Well-structured code is easier to update and scale" },
+                    { title: "Maximum Security", desc: "No vulnerable plugins or outdated dependencies" }
+                  ].map((item, idx) => (
+                    <li key={idx}>
+                      <h4 className="font-display text-lg mb-1">{item.title}</h4>
+                      <p className="text-muted-foreground text-sm">{item.desc}</p>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Project Callout */}
+      <section className="py-24 md:py-32 bg-foreground text-background">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <p className="text-sm tracking-[0.2em] uppercase opacity-60 mb-4">Featured Project</p>
+              <h2 className="font-display text-4xl md:text-5xl mb-6">CSEL Cincinnati</h2>
+              <p className="opacity-80 text-lg leading-relaxed mb-8">
+                We built cselcincy.org for the Center for Social-Emotional Learning—a nonprofit 
+                serving schools throughout Greater Cincinnati. The site features resource management, 
+                event calendars, and a streamlined donation system.
+              </p>
+              <a 
+                href="https://cselcincy.org" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 border border-background/30 px-6 py-3 hover:bg-background/10 transition-colors"
+                data-testid="link-featured-project"
+              >
+                Visit Website <ExternalLink className="w-4 h-4" />
+              </a>
+            </div>
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent rounded-2xl blur-2xl" />
-              {/* Process section coding team */}
               <img 
-                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80" 
-                alt="Team Collaboration" 
-                className="relative rounded-2xl shadow-2xl border border-white/10"
+                src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=800&q=80"
+                alt="CSEL Cincinnati Project"
+                className="w-full aspect-[4/3] object-cover"
               />
             </div>
           </div>
@@ -246,34 +282,40 @@ export default function Home() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-24 relative">
-        <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-12 items-start">
+      <section id="contact" className="py-24 md:py-32">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-16">
             <div>
-              <h2 className="text-3xl md:text-5xl font-display font-bold mb-6">Let's Build Something<br /><span className="text-primary">Great Together</span></h2>
-              <p className="text-muted-foreground text-lg mb-12 max-w-lg">
-                Have a project in mind? We'd love to hear about it. Send us a message and we'll get back to you within 24 hours.
+              <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">Get In Touch</p>
+              <h2 className="font-display text-4xl md:text-5xl mb-6">
+                Let's build something
+                <br />
+                <span className="italic">together</span>
+              </h2>
+              <p className="text-muted-foreground text-lg leading-relaxed mb-12">
+                Ready to start your project? Send us a message and we'll get back to you 
+                within 24 hours with a free consultation.
               </p>
 
-              <div className="space-y-6">
-                <div className="flex items-center gap-4 text-white">
-                  <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center">
-                    <ExternalLink className="text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Visit our main project</p>
-                    <a href="https://cselcincy.org" target="_blank" className="font-semibold hover:text-primary transition-colors">cselcincy.org</a>
-                  </div>
+              <div className="space-y-8">
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Our Work</p>
+                  <a 
+                    href="https://cselcincy.org" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="font-display text-xl hover:underline underline-offset-4"
+                  >
+                    cselcincy.org
+                  </a>
                 </div>
-                
-                <div className="flex items-center gap-4 text-white">
-                  <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center">
-                    <CheckCircle2 className="text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Availability</p>
-                    <p className="font-semibold">Accepting new projects</p>
-                  </div>
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Availability</p>
+                  <p className="font-display text-xl">Currently accepting projects</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Pricing</p>
+                  <p className="font-display text-xl">$35–50/hour</p>
                 </div>
               </div>
             </div>
@@ -284,16 +326,11 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 border-t border-white/10 bg-background">
-        <div className="container mx-auto px-4">
+      <footer className="py-12 border-t border-border">
+        <div className="max-w-6xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                <span className="font-display font-bold text-white text-xl">V</span>
-              </div>
-              <span className="font-display font-bold text-xl tracking-tight text-white">
-                Vaunt<span className="text-primary">.</span>
-              </span>
+            <div className="font-display text-xl">
+              Vaunt Web Solutions
             </div>
             
             <p className="text-muted-foreground text-sm">
@@ -301,8 +338,13 @@ export default function Home() {
             </p>
 
             <div className="flex gap-6">
-              {['Twitter', 'LinkedIn', 'Instagram'].map(social => (
-                <a key={social} href="#" className="text-muted-foreground hover:text-white transition-colors text-sm">
+              {['Twitter', 'LinkedIn', 'GitHub'].map(social => (
+                <a 
+                  key={social} 
+                  href="#" 
+                  className="text-muted-foreground hover:text-foreground transition-colors text-sm"
+                  data-testid={`link-social-${social.toLowerCase()}`}
+                >
                   {social}
                 </a>
               ))}
