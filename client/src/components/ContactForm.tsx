@@ -32,62 +32,22 @@ export function ContactForm() {
 
   return (
     <div className="border border-border p-8 md:p-10 lg:p-12">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <motion.div 
-          className="space-y-2"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
         >
-          <label className="text-sm text-muted-foreground">Name</label>
+          <label className="block text-sm text-muted-foreground mb-2">Name</label>
           <Input
             {...register("name")}
             placeholder="Your name"
-            className="h-14 rounded-none border-border bg-transparent focus:border-foreground transition-colors"
+            className="h-12 border-border bg-transparent focus:border-foreground transition-colors rounded-none"
             data-testid="input-name"
           />
           {errors.name && (
-            <p className="text-sm text-destructive">{errors.name.message}</p>
-          )}
-        </motion.div>
-
-        <motion.div 
-          className="space-y-2"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2 }}
-        >
-          <label className="text-sm text-muted-foreground">Email</label>
-          <Input
-            {...register("email")}
-            type="email"
-            placeholder="your@email.com"
-            className="h-14 rounded-none border-border bg-transparent focus:border-foreground transition-colors"
-            data-testid="input-email"
-          />
-          {errors.email && (
-            <p className="text-sm text-destructive">{errors.email.message}</p>
-          )}
-        </motion.div>
-
-        <motion.div 
-          className="space-y-2"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.3 }}
-        >
-          <label className="text-sm text-muted-foreground">Message</label>
-          <Textarea
-            {...register("message")}
-            placeholder="Tell us about your project..."
-            className="min-h-[180px] rounded-none border-border bg-transparent focus:border-foreground resize-none transition-colors"
-            data-testid="input-message"
-          />
-          {errors.message && (
-            <p className="text-sm text-destructive">{errors.message.message}</p>
+            <p className="text-sm text-destructive mt-2">{errors.name.message}</p>
           )}
         </motion.div>
 
@@ -95,17 +55,52 @@ export function ContactForm() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.4 }}
-          whileHover={{ scale: 1.01 }}
-          whileTap={{ scale: 0.99 }}
+          transition={{ delay: 0.15 }}
         >
-          <Button
-            type="submit"
-            disabled={isPending}
-            className="w-full h-14 rounded-none text-base group relative overflow-hidden"
-            data-testid="button-submit"
-          >
-            <span className="relative z-10 flex items-center justify-center">
+          <label className="block text-sm text-muted-foreground mb-2">Email</label>
+          <Input
+            {...register("email")}
+            type="email"
+            placeholder="your@email.com"
+            className="h-12 border-border bg-transparent focus:border-foreground transition-colors rounded-none"
+            data-testid="input-email"
+          />
+          {errors.email && (
+            <p className="text-sm text-destructive mt-2">{errors.email.message}</p>
+          )}
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2 }}
+        >
+          <label className="block text-sm text-muted-foreground mb-2">Message</label>
+          <Textarea
+            {...register("message")}
+            placeholder="Tell us about your project..."
+            className="min-h-[160px] border-border bg-transparent focus:border-foreground resize-none transition-colors rounded-none"
+            data-testid="input-message"
+          />
+          {errors.message && (
+            <p className="text-sm text-destructive mt-2">{errors.message.message}</p>
+          )}
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.25 }}
+        >
+          <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
+            <Button
+              type="submit"
+              disabled={isPending}
+              className="w-full h-12 text-base bg-foreground text-background hover:bg-foreground/90 rounded-none"
+              data-testid="button-submit"
+            >
               {isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -113,13 +108,12 @@ export function ContactForm() {
                 </>
               ) : (
                 <>
-                  Send Message
-                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  Send message
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </>
               )}
-            </span>
-            <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-          </Button>
+            </Button>
+          </motion.div>
         </motion.div>
       </form>
     </div>
