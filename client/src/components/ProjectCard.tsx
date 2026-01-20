@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ExternalLink } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import type { Project } from "@shared/schema";
 
 interface ProjectCardProps {
@@ -13,32 +13,42 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
       href={project.link}
       target="_blank"
       rel="noopener noreferrer"
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: index * 0.1 }}
       className="group block"
+      whileHover={{ y: -8 }}
+      transition={{ duration: 0.3 }}
       data-testid={`card-project-${project.id}`}
     >
-      <div className="relative aspect-[4/3] overflow-hidden bg-muted mb-4">
-        <img
+      <div className="relative aspect-[4/3] overflow-hidden bg-muted mb-5">
+        <motion.img
           src={project.imageUrl}
           alt={project.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-cover"
+          whileHover={{ scale: 1.08 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         />
-        <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/5 transition-colors" />
+        <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/10 transition-colors duration-300" />
+        
         {project.isFeatured && (
-          <div className="absolute top-4 left-4 bg-background text-foreground text-xs tracking-wider uppercase px-3 py-1">
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="absolute top-4 left-4 bg-background text-foreground text-xs tracking-[0.15em] uppercase px-3 py-1.5 font-medium"
+          >
             Featured
-          </div>
+          </motion.div>
         )}
+
+        <motion.div 
+          className="absolute bottom-4 right-4 w-10 h-10 bg-background text-foreground rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          whileHover={{ scale: 1.1 }}
+        >
+          <ArrowUpRight className="w-5 h-5" />
+        </motion.div>
       </div>
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h3 className="font-display text-xl mb-1 group-hover:underline underline-offset-4">{project.title}</h3>
-          <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">{project.description}</p>
-        </div>
-        <ExternalLink className="w-4 h-4 shrink-0 text-muted-foreground group-hover:text-foreground transition-colors mt-1" />
+      
+      <div>
+        <h3 className="font-display text-xl md:text-2xl mb-2 group-hover:underline underline-offset-4 decoration-1">{project.title}</h3>
+        <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">{project.description}</p>
       </div>
     </motion.a>
   );
