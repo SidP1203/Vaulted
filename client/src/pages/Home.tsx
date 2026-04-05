@@ -414,7 +414,7 @@ export default function Home() {
             className="flex gap-5 pb-4 w-max">
             {serviceCards.map((card, i) => (
               <motion.div key={i} whileHover={{ y: -6 }} transition={{ duration: 0.3 }}
-                className="flex-shrink-0 w-[300px] md:w-[340px] bg-[#f5f4f0] dark:bg-muted/40 group cursor-pointer"
+                className="flex-shrink-0 w-[300px] md:w-[340px] bg-muted dark:bg-muted/40 group cursor-pointer"
                 onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
                 data-testid={`service-card-${card.id}`}>
                 <div className="overflow-hidden aspect-[3/2]">
@@ -588,7 +588,7 @@ export default function Home() {
       </section>
 
       {/* ── Pricing ── */}
-      <section id="pricing" className="py-24 md:py-32 bg-[#f5f4f0] dark:bg-muted/20">
+      <section id="pricing" className="py-24 md:py-32 bg-muted dark:bg-muted/20">
         <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20">
           <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }} transition={{ duration: 0.7 }}
