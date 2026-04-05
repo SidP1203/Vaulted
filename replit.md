@@ -1,14 +1,21 @@
-# Vaunt Web Solutions - Agency Portfolio Site
+# Vaulted Web Solutions - Agency Portfolio Site
 
 ## Overview
 
-This is the website for **Vaunt Web Solutions**, a web development agency. It's a single-page marketing/portfolio site that showcases the agency's services, past work (projects), pricing, and includes a contact form. The site is built as a full-stack TypeScript application with a React frontend and an Express backend connected to a PostgreSQL database.
+This is the website for **Vaulted Web Solutions**, a web development agency. It's a single-page marketing/portfolio site modeled closely after Squarespace's homepage design — full-bleed hero with cycling photo slides, Squarespace-style tab sections, horizontal scrollable card carousels, and animated interactive demos.
 
 Key features:
-- Portfolio projects grid pulled from the database
+- Full-viewport cycling hero (3 auto-rotating background photos, slide indicators)
+- "Sites built by Vaulted" — horizontally scrollable browser-window mockup cards
+- Animated stat counters (count-up on scroll)
+- "What we build" — 4-tab section (Business / E-Commerce / Non-Profits / Portfolios) with image + description
+- "Everything included" — dark background horizontally scrollable feature card carousel
+- "Built to move" — 4 live interactive animation demos (3D tilt, text reveal, scroll counter, parallax)
+- "How we work" — 6-step numbered process grid
+- Pricing section with feature checklist
+- Featured project callout (CSEL Cincinnati)
 - Contact form that saves messages to the database
-- Smooth scroll navigation between page sections (Services, Work, Pricing, Contact)
-- Animated UI using Framer Motion
+- Navbar: transparent + white text over hero, opaque + dark on scroll
 
 ## User Preferences
 
@@ -20,48 +27,56 @@ Preferred communication style: Simple, everyday language.
 
 - **Framework**: React 18 with TypeScript, bundled by Vite
 - **Routing**: `wouter` for lightweight client-side routing (single main page + 404 fallback)
-- **State/Data Fetching**: TanStack React Query for server state management; hooks in `client/src/hooks/` wrap API calls
-- **Styling**: Tailwind CSS with CSS custom properties for theming; "new-york" style shadcn/ui component library
-- **Animations**: Framer Motion for scroll animations, hover effects, and page transitions
-- **UI Components**: Full shadcn/ui component set lives in `client/src/components/ui/`
-- **Fonts**: Space Grotesk (display/headings) and DM Sans (body) loaded from Google Fonts
-- **Form Handling**: React Hook Form with Zod validation via `@hookform/resolvers`
+- **State/Data Fetching**: TanStack React Query for server state; hooks in `client/src/hooks/`
+- **Styling**: Tailwind CSS with CSS custom properties for theming; "new-york" style shadcn/ui
+- **Animations**: Framer Motion — scroll parallax, hover effects, stagger reveals, spring physics
+- **UI Components**: Full shadcn/ui component set in `client/src/components/ui/`
+- **Fonts**: Space Grotesk (display/headings) and DM Sans (body) via Google Fonts
+- **Form Handling**: React Hook Form with Zod validation
 
-The frontend is a single page (`Home.tsx`) with section-based layout. Navigation scrolls to sections using native `scrollIntoView`. The `Navbar` component becomes opaque on scroll.
+The frontend is a single page (`Home.tsx`) with all sections inline. Navbar (`Navbar.tsx`) adapts between transparent/white-text (hero) and opaque/dark-text (scrolled).
 
 ### Backend Architecture
 
 - **Server**: Express 5 (ESM), entry point at `server/index.ts`
-- **Route Registration**: `server/routes.ts` registers all API endpoints, using route paths and input schemas from the shared `shared/routes.ts` contract
-- **Storage Layer**: `server/storage.ts` provides a `DatabaseStorage` class implementing the `IStorage` interface. All DB access goes through this abstraction — this makes it easy to swap implementations.
-- **Dev Server**: In development, Vite middleware is mounted on Express for HMR (`server/vite.ts`). In production, Express serves the pre-built static files from `dist/public`.
-- **Build**: A custom `script/build.ts` runs Vite for the client and esbuild for the server, bundling selected server dependencies for faster cold starts.
+- **Route Registration**: `server/routes.ts` registers all API endpoints
+- **Storage Layer**: `server/storage.ts` provides `DatabaseStorage` implementing `IStorage`
+- **Dev Server**: Vite middleware mounted on Express for HMR. Production: Express serves static build.
 
 ### Shared Contract Layer
 
-The `shared/` directory is the single source of truth for:
-- **Database schema** (`shared/schema.ts`): Drizzle ORM table definitions + Zod schemas auto-generated with `drizzle-zod`
-- **API routes** (`shared/routes.ts`): Defines route paths, HTTP methods, input schemas, and response schemas. Both the frontend hooks and backend route handlers import from here, keeping them in sync.
-
-This pattern eliminates duplicated type definitions and ensures the frontend and backend always agree on API shape.
+The `shared/` directory is the single source of truth:
+- **Database schema** (`shared/schema.ts`): Drizzle ORM + Zod schemas
+- **API routes** (`shared/routes.ts`): Route paths, methods, input/output schemas
 
 ### Database
 
 - **ORM**: Drizzle ORM with PostgreSQL dialect
 - **Database**: PostgreSQL via `DATABASE_URL` environment variable
-- **Schema tables**:
+- **Tables**:
   - `projects`: id, title, description, imageUrl, link, isFeatured
   - `messages`: id, name, email, message, createdAt
-- **Migrations**: Drizzle Kit, output to `./migrations/`, run with `db:push`
 
 ### Authentication
 
-No authentication system is currently implemented. The site is public-facing only.
+No authentication. Public-facing marketing site.
+
+## Key Files
+
+| File | Purpose |
+|---|---|
+| `client/src/pages/Home.tsx` | Main page — all sections, animation demos, tab logic |
+| `client/src/components/Navbar.tsx` | Dynamic navbar (transparent hero → opaque scroll) |
+| `client/src/components/ContactForm.tsx` | Contact form with validation |
+| `client/src/index.css` | Global styles, CSS vars, scrollbar-hide utility |
+| `server/routes.ts` | API routes (GET /api/projects, POST /api/messages) |
+| `server/storage.ts` | Database CRUD operations |
+| `shared/schema.ts` | Drizzle schema + Zod types |
 
 ## External Dependencies
 
 ### Required Environment Variables
-- `DATABASE_URL` — PostgreSQL connection string (required at startup; both server and drizzle-kit will throw if missing)
+- `DATABASE_URL` — PostgreSQL connection string
 
 ### Key Third-Party Libraries
 
@@ -70,23 +85,11 @@ No authentication system is currently implemented. The site is public-facing onl
 | `drizzle-orm` + `drizzle-kit` | Database ORM and migration tooling |
 | `pg` (node-postgres) | PostgreSQL driver |
 | `express` v5 | HTTP server |
-| `@tanstack/react-query` | Client-side server state and caching |
-| `framer-motion` | Animations and transitions |
+| `@tanstack/react-query` | Client-side server state |
+| `framer-motion` | All animations (springs, parallax, scroll triggers) |
 | `wouter` | Lightweight React router |
 | `react-hook-form` + `@hookform/resolvers` | Form state and validation |
-| `zod` + `drizzle-zod` | Runtime validation, shared between client and server |
-| `shadcn/ui` (Radix UI primitives) | Accessible UI component library |
-| `tailwind-merge` + `clsx` | Conditional CSS class utilities |
-| `lucide-react` | Icon set |
-| `vite` | Frontend bundler and dev server |
-| `esbuild` | Server bundler for production |
-| `tsx` | TypeScript execution for development |
-
-### Replit-Specific Plugins (Dev Only)
-- `@replit/vite-plugin-runtime-error-modal` — Shows runtime errors in a modal overlay
-- `@replit/vite-plugin-cartographer` — Replit code navigation
-- `@replit/vite-plugin-dev-banner` — Replit dev environment banner
-
-### External Services
-- **Google Fonts** — Loads Space Grotesk and DM Sans at runtime via `<link>` tags in `index.html` and `index.css`
-- No email provider, payment processor, or authentication service is currently wired up (though `nodemailer` and `stripe` appear in the build allowlist, suggesting future plans)
+| `zod` + `drizzle-zod` | Runtime validation |
+| `shadcn/ui` (Radix UI) | Accessible UI components |
+| `lucide-react` | Icons |
+| `vite` | Frontend bundler |
