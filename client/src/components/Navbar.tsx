@@ -51,7 +51,7 @@ export function Navbar() {
               whileTap={{ scale: 0.98 }}
               data-testid="button-logo"
             >
-              Vaunt
+              Vaulted
             </motion.button>
 
             {/* Desktop Menu */}
