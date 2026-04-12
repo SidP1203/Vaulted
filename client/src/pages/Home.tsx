@@ -34,7 +34,7 @@ const serviceCards = [
   {
     id: "ecommerce",
     label: "E-Commerce",
-    img: "https://images.unsplash.com/photo-1556742049-0cfed4f7a07d?auto=format&fit=crop&w=800&q=80",
+    img: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=800&q=80",
     title: "Sell online with confidence",
     desc: "Custom storefronts with clean checkout flows, payment integrations, and inventory management.",
     tags: ["Artisans · Retailers · Limited Releases"],
@@ -96,7 +96,7 @@ const featureCards = [
 
 const portfolioSites = [
   { title: "CSEL Cincinnati", tag: "Non-profit", url: "https://cselcincy.org", img: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80" },
-  { title: "E-Commerce Platform", tag: "Online Store", url: "#", img: "https://images.unsplash.com/photo-1556742049-0cfed4f7a07d?auto=format&fit=crop&w=800&q=80" },
+  { title: "E-Commerce Platform", tag: "Online Store", url: "#", img: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=800&q=80" },
   { title: "Corporate Dashboard", tag: "SaaS", url: "#", img: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80" },
   { title: "Creative Portfolio", tag: "Portfolio", url: "#", img: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=800&q=80" },
   { title: "Local Business", tag: "Business", url: "#", img: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=800&q=80" },
