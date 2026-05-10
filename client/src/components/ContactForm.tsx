@@ -14,7 +14,7 @@ type FormData = z.infer<typeof formSchema>;
 
 export function ContactForm() {
   const { mutate: sendMessage, isPending } = useSendMessage();
-  
+
   const {
     register,
     handleSubmit,
@@ -22,6 +22,7 @@ export function ContactForm() {
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
+    defaultValues: { name: "", email: "", message: "" },
   });
 
   const onSubmit = (data: FormData) => {
@@ -33,7 +34,7 @@ export function ContactForm() {
   return (
     <div className="border border-border p-8 md:p-10 lg:p-12">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}

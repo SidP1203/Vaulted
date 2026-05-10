@@ -284,7 +284,7 @@ function AnimStat({ target, prefix = "", suffix = "", label }: { target: number;
   }, [inView, target]);
 
   return (
-    <div ref={ref} className="text-center">
+    <div ref={ref} className="relative text-center">
       <p className="font-display text-6xl md:text-7xl lg:text-8xl font-medium tracking-tight tabular-nums leading-none">
         {prefix}{n}{suffix}
       </p>
@@ -385,7 +385,7 @@ export default function Home() {
           </motion.p>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-14 divide-x-0 lg:divide-x divide-border">
             <AnimStat target={100} suffix="%" label="Custom code, always" />
-            <AnimStat target={0} label="Template files shipped" />
+            <AnimStat target={100} suffix="%" label="Clients who own their code" />
             <AnimStat target={35} prefix="$" suffix="+/hr" label="Starting hourly rate" />
             <AnimStat target={24} suffix="hr" label="Average response time" />
           </div>
@@ -455,7 +455,7 @@ export default function Home() {
             className="flex gap-4 pb-4 w-max">
             {featureCards.map((f, i) => (
               <motion.div key={i} whileHover={{ y: -4 }} transition={{ duration: 0.25 }}
-                className="flex-shrink-0 w-[260px] md:w-[300px] bg-background/8 border border-background/15">
+                className="flex-shrink-0 w-[260px] md:w-[300px] bg-white/[0.06] border border-white/[0.12]">
                 <div className="overflow-hidden aspect-[3/2]">
                   <img src={f.img} alt={f.title} className="w-full h-full object-cover opacity-80" />
                 </div>
@@ -509,11 +509,6 @@ export default function Home() {
               </motion.div>
             ))}
           </motion.div>
-          <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-            className="text-center text-sm text-muted-foreground mt-8">
-            Made with Vaulted
-          </motion.p>
         </div>
       </section>
 
