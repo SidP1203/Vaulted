@@ -388,57 +388,140 @@ function GalleryCard({ item }: { item: typeof galleryImages[0] }) {
   );
 }
 
+/* ─── Look Around — draggable infinite canvas of floating browser mockups ── */
+
+// Card layout within a single tile (positions are % of TILE_W/TILE_H)
+const TILE_W = 2400;
+const TILE_H = 1600;
+const cardLayout = [
+  { i: 0, x:  120, y:  120, w: 340, rot: -3 },
+  { i: 1, x:  540, y:  220, w: 280, rot:  2 },
+  { i: 2, x:  900, y:   80, w: 380, rot: -1 },
+  { i: 3, x: 1380, y:  180, w: 300, rot:  3 },
+  { i: 4, x: 1780, y:   60, w: 360, rot: -2 },
+  { i: 5, x:  220, y:  640, w: 320, rot:  2 },
+  { i: 6, x:  640, y:  720, w: 380, rot: -2 },
+  { i: 7, x: 1120, y:  680, w: 300, rot:  1 },
+  { i: 8, x: 1500, y:  760, w: 340, rot: -3 },
+  { i: 9, x: 1900, y:  640, w: 280, rot:  2 },
+  { i: 0, x:  100, y: 1200, w: 360, rot:  1 },
+  { i: 1, x:  560, y: 1280, w: 300, rot: -2 },
+  { i: 2, x:  960, y: 1180, w: 340, rot:  3 },
+  { i: 3, x: 1400, y: 1300, w: 320, rot: -1 },
+  { i: 4, x: 1820, y: 1220, w: 280, rot:  2 },
+];
+
+function LookAroundCard({ item, w, rot }: { item: typeof galleryImages[0]; w: number; rot: number }) {
+  return (
+    <div className="rounded-xl overflow-hidden shadow-2xl"
+      style={{
+        width: w,
+        transform: `rotate(${rot}deg)`,
+        border: "1px solid rgba(255,255,255,0.08)",
+        boxShadow: "0 30px 60px -20px rgba(0,0,0,0.7), 0 18px 36px -18px rgba(0,0,0,0.5)",
+      }}>
+      <div className="flex items-center gap-2 px-3 py-2" style={{ background: "#1c1c1c" }}>
+        <div className="flex gap-1.5">
+          <div className="w-2.5 h-2.5 rounded-full" style={{ background: "#ff5f57" }} />
+          <div className="w-2.5 h-2.5 rounded-full" style={{ background: "#febc2e" }} />
+          <div className="w-2.5 h-2.5 rounded-full" style={{ background: "#28c840" }} />
+        </div>
+        <div className="flex-1 rounded px-2 py-0.5 text-[10px] truncate"
+          style={{ background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.35)" }}>
+          {item.title.toLowerCase().replace(/\s/g, "")}.com
+        </div>
+      </div>
+      <img src={item.img} alt={item.title} draggable={false}
+        className="w-full object-cover block select-none pointer-events-none"
+        style={{ height: w * 0.62 }} />
+    </div>
+  );
+}
+
 function FloatingGallery() {
-  const row1 = [...galleryImages, ...galleryImages];
-  const row2 = [...galleryImages.slice(4), ...galleryImages.slice(0, 4), ...galleryImages.slice(4), ...galleryImages.slice(0, 4)];
-  const row3 = [...galleryImages.slice(2), ...galleryImages.slice(0, 2), ...galleryImages.slice(2), ...galleryImages.slice(0, 2)];
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const [hasDragged, setHasDragged] = useState(false);
+
+  // Wrap into [-TILE_W/2, TILE_W/2) so the 3x3 tile grid feels infinite
+  const wrappedX = useTransform(x, v => ((v % TILE_W) + TILE_W * 1.5) % TILE_W - TILE_W / 2);
+  const wrappedY = useTransform(y, v => ((v % TILE_H) + TILE_H * 1.5) % TILE_H - TILE_H / 2);
+
+  // Render a 3x3 grid of tiles centered on (0,0) so panning in any direction stays filled
+  const tileOffsets: Array<[number, number]> = [];
+  for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) tileOffsets.push([i, j]);
 
   return (
-    <div className="relative overflow-hidden" id="work"
-      style={{ height: 530, background: "#0a0a0a" }}>
+    <section id="work" className="relative overflow-hidden select-none"
+      style={{ height: 640, background: "#0a0a0a", borderTop: "1px solid rgba(255,255,255,0.06)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
 
-      {/* Row 1 — left */}
-      <div className="absolute top-8 overflow-hidden w-full">
-        <div className="gallery-scroll-left flex gap-3" style={{ width: "max-content" }}>
-          {row1.map((item, i) => <GalleryCard key={i} item={item} />)}
-        </div>
-      </div>
+      {/* Draggable layer */}
+      <motion.div
+        drag
+        dragMomentum={true}
+        dragTransition={{ power: 0.35, timeConstant: 350, bounceStiffness: 0, bounceDamping: 0 }}
+        onDragStart={() => setHasDragged(true)}
+        style={{ x, y, width: TILE_W, height: TILE_H, position: "absolute", left: "50%", top: "50%", marginLeft: -TILE_W / 2, marginTop: -TILE_H / 2, cursor: "grab" }}
+        whileDrag={{ cursor: "grabbing" }}
+        data-testid="lookaround-canvas"
+      >
+        {/* Wrapped tile container — visually re-centered so panning loops */}
+        <motion.div style={{ x: wrappedX, y: wrappedY, position: "absolute", inset: 0 }}>
+          {tileOffsets.map(([tx, ty]) => (
+            <div key={`${tx}-${ty}`} style={{ position: "absolute", left: tx * TILE_W, top: ty * TILE_H, width: TILE_W, height: TILE_H }}>
+              {cardLayout.map((c, idx) => (
+                <div key={idx} style={{ position: "absolute", left: c.x, top: c.y }}>
+                  <LookAroundCard item={galleryImages[c.i]} w={c.w} rot={c.rot} />
+                </div>
+              ))}
+            </div>
+          ))}
+        </motion.div>
+      </motion.div>
 
-      {/* Row 2 — right */}
-      <div className="absolute overflow-hidden w-full" style={{ top: 8 + 145 + 32 + 12 }}>
-        <div className="gallery-scroll-right flex gap-3" style={{ width: "max-content" }}>
-          {row2.map((item, i) => <GalleryCard key={i} item={item} />)}
-        </div>
-      </div>
-
-      {/* Row 3 — left fast */}
-      <div className="absolute overflow-hidden w-full" style={{ top: 8 + 2 * (145 + 32 + 12) }}>
-        <div className="gallery-scroll-left2 flex gap-3" style={{ width: "max-content" }}>
-          {row3.map((item, i) => <GalleryCard key={i} item={item} />)}
-        </div>
-      </div>
-
-      {/* Center vignette */}
+      {/* Center vignette — fades cards behind text */}
       <div className="absolute inset-0 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse 60% 55% at 50% 50%, rgba(10,10,10,0.88) 0%, rgba(10,10,10,0.45) 55%, transparent 100%)" }} />
+        style={{ background: "radial-gradient(ellipse 55% 50% at 50% 50%, rgba(10,10,10,0.88) 0%, rgba(10,10,10,0.55) 45%, rgba(10,10,10,0.15) 75%, transparent 100%)" }} />
+
+      {/* Edge fades */}
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ background: "linear-gradient(to right, rgba(10,10,10,0.6), transparent 12%, transparent 88%, rgba(10,10,10,0.6))" }} />
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ background: "linear-gradient(to bottom, rgba(10,10,10,0.5), transparent 12%, transparent 88%, rgba(10,10,10,0.5))" }} />
 
       {/* Center overlay text */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-5 pointer-events-none">
-        <h2 className="text-white font-medium text-center" style={{ fontSize: "clamp(2rem,4.5vw,3.25rem)", letterSpacing: "-0.02em" }}>
-          Made with Vaulted
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 pointer-events-none px-6 text-center">
+        <p className="text-white/40 text-[11px] uppercase tracking-[0.2em]">Made with Vaulted</p>
+        <h2 className="text-white font-medium" style={{ fontSize: "clamp(2.25rem,5vw,3.75rem)", letterSpacing: "-0.025em", lineHeight: 1.05 }}>
+          Look around.
         </h2>
-        <p className="text-white/50 text-[15px]">Real sites. Real businesses.</p>
+        <p className="text-white/55 text-[15px] max-w-md leading-relaxed">
+          Real sites, hand-built for real businesses. Click and drag anywhere to explore.
+        </p>
+        <AnimatePresence>
+          {!hasDragged && (
+            <motion.div
+              initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+              transition={{ delay: 0.3 }}
+              className="mt-2 inline-flex items-center gap-2 text-white/50 text-[12px] tracking-wide">
+              <span className="inline-block w-6 h-6 rounded-full border border-white/30 flex items-center justify-center">
+                <ArrowRight className="w-3 h-3 -rotate-45" />
+              </span>
+              Drag to pan
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
-      {/* Bottom "see our work" link */}
-      <div className="absolute bottom-6 inset-x-0 flex justify-center">
+      {/* Featured project link */}
+      <div className="absolute bottom-5 inset-x-0 flex justify-center pointer-events-none">
         <a href="https://cselcincy.org" target="_blank" rel="noopener noreferrer"
-          className="pointer-events-auto inline-flex items-center gap-2 text-[13px] text-white/45 hover:text-white transition-colors"
+          className="pointer-events-auto inline-flex items-center gap-2 text-[13px] text-white/50 hover:text-white transition-colors"
           data-testid="link-view-all-work">
           See our featured project <ArrowRight className="w-3.5 h-3.5" />
         </a>
       </div>
-    </div>
+    </section>
   );
 }
 
