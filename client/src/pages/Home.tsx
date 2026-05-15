@@ -300,7 +300,7 @@ function DemoCard({ tag, label, desc, children }: { tag: string; label: string; 
         <span className="text-[11px] font-medium text-white/35 uppercase tracking-widest">{tag}</span>
         <span className="text-[10px] text-white/20 font-mono">live</span>
       </div>
-      <div className="flex-1 min-h-[220px] md:min-h-[260px] px-6 py-4">{children}</div>
+      <div className="flex items-center justify-center" style={{ height: 280 }}>{children}</div>
       <div className="px-6 pb-7 pt-4" style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
         <p className="text-lg font-semibold text-white mb-1">{label}</p>
         <p className="text-sm text-white/45">{desc}</p>
@@ -348,6 +348,96 @@ function DarkAccordionItem({
           </motion.div>
         )}
       </AnimatePresence>
+    </div>
+  );
+}
+
+/* ─── Floating gallery (Made with Vaulted) ──────────────────────── */
+
+const galleryImages = [
+  { title: "CSEL Cincinnati",     img: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=600&q=80" },
+  { title: "E-Commerce Store",    img: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=600&q=80" },
+  { title: "Corporate Dashboard", img: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80" },
+  { title: "Creative Portfolio",  img: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=600&q=80" },
+  { title: "Local Business",      img: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=600&q=80" },
+  { title: "Restaurant & Events", img: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=600&q=80" },
+  { title: "Fashion Brand",       img: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=600&q=80" },
+  { title: "Law Firm",            img: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=600&q=80" },
+  { title: "Music Studio",        img: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80" },
+  { title: "Architecture Firm",   img: "https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=600&q=80" },
+];
+
+function GalleryCard({ item }: { item: typeof galleryImages[0] }) {
+  return (
+    <div className="shrink-0 w-[230px] rounded-xl overflow-hidden"
+      style={{ border: "1px solid rgba(255,255,255,0.1)" }}>
+      <div className="flex items-center gap-2 px-3 py-2.5" style={{ background: "#1c1c1c" }}>
+        <div className="flex gap-1.5">
+          <div className="w-2 h-2 rounded-full" style={{ background: "#ff5f57" }} />
+          <div className="w-2 h-2 rounded-full" style={{ background: "#febc2e" }} />
+          <div className="w-2 h-2 rounded-full" style={{ background: "#28c840" }} />
+        </div>
+        <div className="flex-1 rounded px-2 py-0.5 text-[9px] truncate"
+          style={{ background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.3)" }}>
+          {item.title.toLowerCase().replace(/\s/g, "")}.com
+        </div>
+      </div>
+      <img src={item.img} alt={item.title} loading="lazy"
+        className="w-full object-cover" style={{ height: 145 }} />
+    </div>
+  );
+}
+
+function FloatingGallery() {
+  const row1 = [...galleryImages, ...galleryImages];
+  const row2 = [...galleryImages.slice(4), ...galleryImages.slice(0, 4), ...galleryImages.slice(4), ...galleryImages.slice(0, 4)];
+  const row3 = [...galleryImages.slice(2), ...galleryImages.slice(0, 2), ...galleryImages.slice(2), ...galleryImages.slice(0, 2)];
+
+  return (
+    <div className="relative overflow-hidden" id="work"
+      style={{ height: 530, background: "#0a0a0a" }}>
+
+      {/* Row 1 — left */}
+      <div className="absolute top-8 overflow-hidden w-full">
+        <div className="gallery-scroll-left flex gap-3" style={{ width: "max-content" }}>
+          {row1.map((item, i) => <GalleryCard key={i} item={item} />)}
+        </div>
+      </div>
+
+      {/* Row 2 — right */}
+      <div className="absolute overflow-hidden w-full" style={{ top: 8 + 145 + 32 + 12 }}>
+        <div className="gallery-scroll-right flex gap-3" style={{ width: "max-content" }}>
+          {row2.map((item, i) => <GalleryCard key={i} item={item} />)}
+        </div>
+      </div>
+
+      {/* Row 3 — left fast */}
+      <div className="absolute overflow-hidden w-full" style={{ top: 8 + 2 * (145 + 32 + 12) }}>
+        <div className="gallery-scroll-left2 flex gap-3" style={{ width: "max-content" }}>
+          {row3.map((item, i) => <GalleryCard key={i} item={item} />)}
+        </div>
+      </div>
+
+      {/* Center vignette */}
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ background: "radial-gradient(ellipse 60% 55% at 50% 50%, rgba(10,10,10,0.88) 0%, rgba(10,10,10,0.45) 55%, transparent 100%)" }} />
+
+      {/* Center overlay text */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-5 pointer-events-none">
+        <h2 className="text-white font-medium text-center" style={{ fontSize: "clamp(2rem,4.5vw,3.25rem)", letterSpacing: "-0.02em" }}>
+          Made with Vaulted
+        </h2>
+        <p className="text-white/50 text-[15px]">Real sites. Real businesses.</p>
+      </div>
+
+      {/* Bottom "see our work" link */}
+      <div className="absolute bottom-6 inset-x-0 flex justify-center">
+        <a href="https://cselcincy.org" target="_blank" rel="noopener noreferrer"
+          className="pointer-events-auto inline-flex items-center gap-2 text-[13px] text-white/45 hover:text-white transition-colors"
+          data-testid="link-view-all-work">
+          See our featured project <ArrowRight className="w-3.5 h-3.5" />
+        </a>
+      </div>
     </div>
   );
 }
@@ -458,6 +548,15 @@ export default function Home() {
 
   useEffect(() => {
     const id = setInterval(() => setScene(s => (s + 1) % heroScenes.length), 4500);
+    return () => clearInterval(id);
+  }, []);
+
+  // Auto-advance service tabs
+  useEffect(() => {
+    const id = setInterval(() => {
+      tabDirRef.current = 1;
+      setActiveTab(prev => (prev + 1) % serviceTabs.length);
+    }, 4000);
     return () => clearInterval(id);
   }, []);
 
@@ -636,25 +735,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Portfolio — interactive circular lens ── */}
-      <section id="work" className="py-[120px] max-md:py-[72px]" style={{ background: "#111" }}>
-        <div className="max-w-[1280px] mx-auto px-6 md:px-12">
-          <Reveal className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-            <div>
-              <h2 className="text-white font-medium mb-3" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
-                Made with Vaulted
-              </h2>
-              <p className="text-white/45 text-[17px] max-w-md leading-relaxed">Real sites, hand-built for real businesses.</p>
-            </div>
-            <a href="https://cselcincy.org" target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-[14px] font-medium text-white/60 hover:text-white transition-colors"
-              data-testid="link-view-all-work">
-              See our featured project <ArrowRight className="w-4 h-4" />
-            </a>
-          </Reveal>
-          <PortfolioLens />
-        </div>
-      </section>
+      {/* ── Portfolio — floating gallery ── */}
+      <FloatingGallery />
 
       {/* ── Animation showcase ── */}
       <section id="capabilities" className="py-[120px] max-md:py-[72px]" style={{ background: "#0a0a0a", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
@@ -677,31 +759,60 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── How it works — dark Squarespace accordion ── */}
+      {/* ── How it works + Common questions — 2-column side by side ── */}
       <section className="py-[120px] max-md:py-[72px]" style={{ background: "#111", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
         <div className="max-w-[1280px] mx-auto px-6 md:px-12">
-          <Reveal className="mb-4">
-            <h2 className="text-white font-medium" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
-              How it works
-            </h2>
-          </Reveal>
-          <Reveal delay={0.05} className="mb-14">
-            <p className="text-white/40 text-[17px] max-w-xl leading-relaxed">
-              A clear process from first conversation to launch day — no surprises.
-            </p>
-          </Reveal>
-          <div className="max-w-3xl" style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}>
-            {processSteps.map((step, i) => (
-              <DarkAccordionItem
-                key={i}
-                num={step.num}
-                title={step.title}
-                body={step.desc}
-                isOpen={openProcess === i}
-                onToggle={() => setOpenProcess(openProcess === i ? null : i)}
-                testId={`process-${step.num}`}
-              />
-            ))}
+          <div className="grid md:grid-cols-2 gap-16 lg:gap-24">
+
+            {/* Left — How it works */}
+            <div>
+              <Reveal className="mb-10">
+                <h2 className="text-white font-medium mb-2" style={{ fontSize: "clamp(1.4rem,2.8vw,2.25rem)", letterSpacing: "-0.02em" }}>
+                  How it works
+                </h2>
+                <p className="text-white/40 text-[15px] leading-relaxed">
+                  A clear process from first call to launch day.
+                </p>
+              </Reveal>
+              <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}>
+                {processSteps.map((step, i) => (
+                  <DarkAccordionItem
+                    key={i}
+                    num={step.num}
+                    title={step.title}
+                    body={step.desc}
+                    isOpen={openProcess === i}
+                    onToggle={() => setOpenProcess(openProcess === i ? null : i)}
+                    testId={`process-${step.num}`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Right — Common questions */}
+            <div>
+              <Reveal className="mb-10">
+                <h2 className="text-white font-medium mb-2" style={{ fontSize: "clamp(1.4rem,2.8vw,2.25rem)", letterSpacing: "-0.02em" }}>
+                  Common questions.
+                </h2>
+                <p className="text-white/40 text-[15px] leading-relaxed">
+                  Everything you need to know before getting started.
+                </p>
+              </Reveal>
+              <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}>
+                {faqs.map((faq, i) => (
+                  <DarkAccordionItem
+                    key={i}
+                    title={faq.q}
+                    body={faq.a}
+                    isOpen={openFaq === i}
+                    onToggle={() => setOpenFaq(openFaq === i ? null : i)}
+                    testId={`faq-${i}`}
+                  />
+                ))}
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
@@ -784,28 +895,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Common questions — dark Squarespace accordion ── */}
-      <section className="py-[120px] max-md:py-[72px]" style={{ background: "#0a0a0a", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-        <div className="max-w-[1280px] mx-auto px-6 md:px-12">
-          <Reveal className="mb-14">
-            <h2 className="text-white font-medium" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
-              Common questions.
-            </h2>
-          </Reveal>
-          <div className="max-w-3xl" style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}>
-            {faqs.map((faq, i) => (
-              <DarkAccordionItem
-                key={i}
-                title={faq.q}
-                body={faq.a}
-                isOpen={openFaq === i}
-                onToggle={() => setOpenFaq(openFaq === i ? null : i)}
-                testId={`faq-${i}`}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ── Contact — cycling photo background (same rolling images as hero) ── */}
       <section id="contact" className="relative overflow-hidden" style={{ minHeight: 700 }}>
