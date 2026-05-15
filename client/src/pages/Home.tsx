@@ -396,28 +396,132 @@ function FAQItem({ q, a, isOpen, onToggle }: { q: string; a: string; isOpen: boo
   );
 }
 
-/* ─── Vertical auto-scroll image strip (Squarespace "Grow" style) ── */
+/* ─── Portfolio circular lens (Squarespace-exact ball/peephole effect) ── */
 
-function VerticalScrollStrip({ images }: { images: string[] }) {
-  const triple = [...images, ...images, ...images];
+function PortfolioLens() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const rawX = useMotionValue(0);
+  const rawY = useMotionValue(0);
+  const lensX = useSpring(rawX, { stiffness: 220, damping: 28 });
+  const lensY = useSpring(rawY, { stiffness: 220, damping: 28 });
+  const LENS = 320;
+  const lensLeft = useTransform(lensX, v => v - LENS / 2);
+  const lensTop  = useTransform(lensY, v => v - LENS / 2);
+  const [isInside, setIsInside] = useState(false);
+  const [lensIdx, setLensIdx]   = useState(0);
+
+  function onMove(e: React.MouseEvent<HTMLDivElement>) {
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    rawX.set(x);
+    rawY.set(y);
+    setLensIdx(Math.max(0, Math.min(Math.floor((x / rect.width) * portfolioSites.length), portfolioSites.length - 1)));
+  }
+
   return (
-    <div className="relative overflow-hidden rounded-2xl" style={{ height: 520 }}>
-      <motion.div
-        animate={{ y: ["0%", "-33.333%"] }}
-        transition={{ duration: 16, ease: "linear", repeat: Infinity, repeatType: "loop" }}
-        className="flex flex-col gap-3"
-      >
-        {triple.map((src, i) => (
-          <div key={i} className="shrink-0 rounded-xl overflow-hidden" style={{ height: 200 }}>
-            <img src={src} alt="" className="w-full h-full object-cover" loading="lazy" />
+    <div
+      ref={containerRef}
+      className="relative overflow-hidden cursor-none select-none w-full"
+      style={{ height: 520, background: "#111" }}
+      onMouseMove={onMove}
+      onMouseEnter={() => setIsInside(true)}
+      onMouseLeave={() => setIsInside(false)}
+    >
+      {/* Column labels at bottom */}
+      <div className="absolute inset-0 grid pointer-events-none"
+        style={{ gridTemplateColumns: `repeat(${portfolioSites.length}, 1fr)` }}>
+        {portfolioSites.map((site, i) => (
+          <div key={i} className="flex flex-col justify-end p-6"
+            style={{ borderRight: i < portfolioSites.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
+            <p className="text-white/25 text-[10px] uppercase tracking-widest mb-1">{site.tag}</p>
+            <p className="text-white/40 text-sm font-medium">{site.title}</p>
           </div>
         ))}
-      </motion.div>
-      {/* Fade top & bottom edges */}
-      <div className="absolute inset-x-0 top-0 h-20 pointer-events-none z-10"
-        style={{ background: "linear-gradient(to bottom, #fff 0%, transparent 100%)" }} />
-      <div className="absolute inset-x-0 bottom-0 h-20 pointer-events-none z-10"
-        style={{ background: "linear-gradient(to top, #fff 0%, transparent 100%)" }} />
+      </div>
+
+      {/* Idle hint */}
+      <AnimatePresence>
+        {!isInside && (
+          <motion.p
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="absolute inset-0 flex items-center justify-center pointer-events-none text-white/20 text-lg tracking-wide"
+          >
+            Move your cursor to explore
+          </motion.p>
+        )}
+      </AnimatePresence>
+
+      {/* Circular lens */}
+      <AnimatePresence>
+        {isInside && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.55 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.55 }}
+            transition={{ duration: 0.32, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="absolute pointer-events-none overflow-hidden"
+            style={{
+              width: LENS, height: LENS, borderRadius: "50%",
+              x: lensLeft, y: lensTop,
+              border: "1.5px solid rgba(255,255,255,0.22)",
+              boxShadow: "0 0 0 1px rgba(255,255,255,0.06), 0 28px 80px rgba(0,0,0,0.75)",
+            }}
+          >
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={lensIdx}
+                src={portfolioSites[lensIdx].img}
+                alt={portfolioSites[lensIdx].title}
+                initial={{ opacity: 0, scale: 1.08 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.22 }}
+                className="w-full h-full object-cover"
+              />
+            </AnimatePresence>
+            <div className="absolute inset-x-0 bottom-0 p-5 text-center"
+              style={{ background: "linear-gradient(to top, rgba(0,0,0,0.82), transparent)" }}>
+              <p className="text-white text-[13px] font-semibold">{portfolioSites[lensIdx].title}</p>
+              <p className="text-white/55 text-[11px] mt-0.5">{portfolioSites[lensIdx].tag}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+/* ─── Process accordion item ─────────────────────────────────────── */
+
+function ProcessItem({ step, isOpen, onToggle }: {
+  step: typeof processSteps[0]; isOpen: boolean; onToggle: () => void;
+}) {
+  return (
+    <div style={{ borderBottom: "1px solid #e8e8e8" }}>
+      <button
+        className="w-full flex items-center gap-6 py-5 text-left group"
+        onClick={onToggle}
+        data-testid={`process-${step.num}`}
+      >
+        <span className="text-xl font-medium text-[#ccc] w-10 shrink-0">{step.num}</span>
+        <span className="flex-1 text-[17px] font-medium text-[#111] group-hover:opacity-60 transition-opacity">{step.title}</span>
+        <ChevronDown size={18} className="text-[#999] shrink-0 transition-transform duration-300"
+          style={{ transform: isOpen ? "rotate(180deg)" : "none" }} />
+      </button>
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="overflow-hidden"
+          >
+            <p className="pb-5 pl-16 text-[17px] leading-relaxed text-[#555]">{step.desc}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -446,6 +550,12 @@ export default function Home() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [hoveredPortfolio, setHoveredPortfolio] = useState<number | null>(null);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+  const [openProcess, setOpenProcess] = useState<number | null>(null);
+  const tabDirRef = useRef(1);
+  const handleTabChange = useCallback((i: number) => {
+    tabDirRef.current = i > activeTab ? 1 : -1;
+    setActiveTab(i);
+  }, [activeTab]);
   const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -561,82 +671,94 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Services — Squarespace "Grow your business" layout ── */}
+      {/* ── Services — "Grow your business" Squarespace-exact layout ── */}
       <section id="services" className="py-[120px] max-md:py-[72px] overflow-hidden">
         <div className="max-w-[1280px] mx-auto px-6 md:px-12">
 
-          {/* Section header */}
-          <Reveal className="mb-12">
-            <h2 className="text-[#111] font-medium mb-4" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
-              You deserve a website that works.
+          {/* Header */}
+          <Reveal className="mb-10">
+            <h2 className="text-[#111] font-medium mb-3" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
+              Grow your business.
             </h2>
             <p className="text-[#555] text-[17px] max-w-xl leading-relaxed">
               Whatever your business, we build it from scratch — no templates, no shortcuts.
             </p>
           </Reveal>
 
-          {/* Two-column: scrolling images LEFT, tabs + content RIGHT */}
-          <div className="flex flex-col-reverse md:flex-row gap-10 md:gap-16 items-start">
+          {/* Horizontal pill tabs */}
+          <div className="overflow-x-auto scrollbar-hide mb-10">
+            <div className="flex gap-2 w-max">
+              {serviceTabs.map((tab, i) => (
+                <button
+                  key={i}
+                  onClick={() => handleTabChange(i)}
+                  className="px-5 py-2 text-[14px] rounded-full border transition-all duration-200 whitespace-nowrap"
+                  style={activeTab === i
+                    ? { background: "#111", color: "#fff", border: "1px solid #111" }
+                    : { background: "#fff", color: "#555", border: "1px solid #ddd" }
+                  }
+                  data-testid={`tab-service-${i}`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
 
-            {/* Left — continuous vertical scroll strip */}
-            <div className="w-full md:w-[42%] shrink-0">
-              <VerticalScrollStrip images={serviceTabs.map(t => t.img)} />
+          {/* Split: LEFT = horizontally sliding image, RIGHT = description */}
+          <div className="grid md:grid-cols-[55%_1fr] gap-10 md:gap-16 items-center">
+
+            {/* Image — slides horizontally on tab change */}
+            <div className="overflow-hidden rounded-2xl" style={{ aspectRatio: "16/10", boxShadow: "0 8px 48px rgba(0,0,0,0.12)" }}>
+              <AnimatePresence mode="wait" custom={tabDirRef.current} initial={false}>
+                <motion.img
+                  key={activeTab}
+                  src={serviceTabs[activeTab].img}
+                  alt={serviceTabs[activeTab].heading}
+                  custom={tabDirRef.current}
+                  variants={{
+                    enter: (d: number) => ({ x: d * 80, opacity: 0 }),
+                    center: { x: 0, opacity: 1 },
+                    exit:  (d: number) => ({ x: d * -80, opacity: 0 }),
+                  }}
+                  initial="enter" animate="center" exit="exit"
+                  transition={{ duration: 0.42, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+              </AnimatePresence>
             </div>
 
-            {/* Right — pill tabs + sliding content */}
-            <div className="flex-1 md:pt-4">
-              {/* Pill tabs */}
-              <div className="overflow-x-auto scrollbar-hide mb-10">
-                <div className="flex gap-2 w-max">
-                  {serviceTabs.map((tab, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setActiveTab(i)}
-                      className="px-5 py-2 text-[14px] rounded-full border transition-all duration-200 whitespace-nowrap"
-                      style={activeTab === i
-                        ? { background: "#111", color: "#fff", border: "1px solid #111" }
-                        : { background: "#fff", color: "#555", border: "1px solid #ddd" }
-                      }
-                      data-testid={`tab-service-${i}`}
-                    >
-                      {tab.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Sliding content panel — new enters from below, old exits upward */}
-              <div className="relative overflow-hidden min-h-[340px]">
-                <AnimatePresence mode="wait" initial={false}>
-                  <motion.div
-                    key={activeTab}
-                    initial={{ opacity: 0, y: 36 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -28 }}
-                    transition={{ duration: 0.42, ease: [0.25, 0.46, 0.45, 0.94] }}
+            {/* Text — slides up on tab change */}
+            <div className="relative overflow-hidden min-h-[260px]">
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={activeTab}
+                  initial={{ opacity: 0, y: 28 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.38, ease: [0.25, 0.46, 0.45, 0.94] }}
+                >
+                  <p className="text-[11px] font-medium text-[#999] tracking-widest uppercase mb-4">
+                    {serviceTabs[activeTab].label}
+                  </p>
+                  <h3 className="text-[#111] font-medium mb-4"
+                    style={{ fontSize: "clamp(1.4rem,2.5vw,2rem)", letterSpacing: "-0.02em" }}>
+                    {serviceTabs[activeTab].heading}
+                  </h3>
+                  <p className="text-[#555] text-[17px] leading-relaxed mb-5">
+                    {serviceTabs[activeTab].desc}
+                  </p>
+                  <p className="text-[14px] text-[#999] mb-8">Great for: {serviceTabs[activeTab].tags}</p>
+                  <button
+                    onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+                    className="sqsp-btn-primary"
+                    data-testid={`service-cta-${activeTab}`}
                   >
-                    <p className="text-[11px] font-medium text-[#999] tracking-widest uppercase mb-5">
-                      {serviceTabs[activeTab].label}
-                    </p>
-                    <h3 className="text-[#111] font-medium mb-5" style={{ fontSize: "clamp(1.5rem,3vw,2.1rem)", letterSpacing: "-0.02em" }}>
-                      {serviceTabs[activeTab].heading}
-                    </h3>
-                    <p className="text-[#555] text-[17px] leading-relaxed mb-5">
-                      {serviceTabs[activeTab].desc}
-                    </p>
-                    <p className="text-[14px] text-[#999] mb-9">
-                      Great for: {serviceTabs[activeTab].tags}
-                    </p>
-                    <button
-                      onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-                      className="sqsp-btn-primary"
-                      data-testid={`service-cta-${activeTab}`}
-                    >
-                      Start this project
-                    </button>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
+                    Start this project
+                  </button>
+                </motion.div>
+              </AnimatePresence>
             </div>
 
           </div>
@@ -691,99 +813,8 @@ export default function Home() {
             </a>
           </Reveal>
 
-          {/* Grid with mouse-tracking floating preview */}
-          <div
-            className="relative"
-            onMouseMove={(e) => setCursorPos({ x: e.clientX, y: e.clientY })}
-            onMouseLeave={() => setHoveredPortfolio(null)}
-          >
-            {/* Floating cursor preview card — follows mouse, shows hovered site */}
-            <AnimatePresence>
-              {hoveredPortfolio !== null && (
-                <motion.div
-                  key={hoveredPortfolio}
-                  initial={{ opacity: 0, scale: 0.88, y: 8 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.88, y: 8 }}
-                  transition={{ duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] }}
-                  className="fixed pointer-events-none z-50 overflow-hidden rounded-2xl"
-                  style={{
-                    left: cursorPos.x + 28,
-                    top: cursorPos.y - 110,
-                    width: 290,
-                    height: 190,
-                    boxShadow: "0 20px 60px rgba(0,0,0,0.22)",
-                  }}
-                >
-                  <img
-                    src={portfolioSites[hoveredPortfolio].img}
-                    alt={portfolioSites[hoveredPortfolio].title}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 flex flex-col justify-end p-4"
-                    style={{ background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 55%)" }}>
-                    <p className="text-white text-[15px] font-semibold leading-tight">
-                      {portfolioSites[hoveredPortfolio].title}
-                    </p>
-                    <p className="text-white/65 text-xs mt-0.5">
-                      {portfolioSites[hoveredPortfolio].tag}
-                    </p>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Portfolio grid */}
-            <motion.div
-              initial="hidden" whileInView="visible" viewport={{ once: true }}
-              variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.06 } } }}
-              className="grid grid-cols-2 md:grid-cols-3 gap-4"
-            >
-              {portfolioSites.map((site, i) => (
-                <motion.div
-                  key={i}
-                  variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }}
-                  className="relative overflow-hidden cursor-none rounded-xl aspect-[4/3]"
-                  onMouseEnter={() => setHoveredPortfolio(i)}
-                  onMouseLeave={() => setHoveredPortfolio(null)}
-                  onClick={() => site.url !== "#" && window.open(site.url, "_blank")}
-                  data-testid={`portfolio-item-${i}`}
-                  style={{
-                    transition: "box-shadow 0.3s ease",
-                    boxShadow: hoveredPortfolio === i ? "0 8px 32px rgba(0,0,0,0.18)" : "0 2px 8px rgba(0,0,0,0.06)",
-                  }}
-                >
-                  {/* Image with parallax nudge toward cursor */}
-                  <motion.img
-                    src={site.img}
-                    alt={site.title}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                    animate={hoveredPortfolio === i ? { scale: 1.07 } : { scale: 1 }}
-                    transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
-                  />
-
-                  {/* Subtle label always visible at bottom */}
-                  <div className="absolute inset-x-0 bottom-0 p-4"
-                    style={{ background: "linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 80%)" }}>
-                    <p className="text-white text-sm font-semibold">{site.title}</p>
-                    <p className="text-white/60 text-xs">{site.tag}</p>
-                  </div>
-
-                  {/* Active ring */}
-                  {hoveredPortfolio === i && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="absolute inset-0 pointer-events-none"
-                      style={{ border: "2px solid rgba(255,255,255,0.4)" }}
-                    />
-                  )}
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
+          {/* Circular lens — Squarespace-exact ball effect */}
+          <PortfolioLens />
         </div>
       </section>
 
@@ -809,7 +840,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Process ── */}
+      {/* ── Process — accordion ── */}
       <section className="py-[120px] max-md:py-[72px]">
         <div className="max-w-[1280px] mx-auto px-6 md:px-12">
           <Reveal className="mb-14">
@@ -820,17 +851,14 @@ export default function Home() {
               A clear process from first conversation to launch day — no surprises.
             </p>
           </Reveal>
-          <div style={{ borderTop: "1px solid #e8e8e8" }}>
+          <div className="max-w-2xl" style={{ borderTop: "1px solid #e8e8e8" }}>
             {processSteps.map((step, i) => (
-              <Reveal key={i} delay={i * 0.05}>
-                <div
-                  className="grid grid-cols-[3rem_1fr] md:grid-cols-[4rem_1fr_1.5fr] gap-6 md:gap-10 py-8 md:py-9 hover:bg-[#fafafa] px-2 -mx-2 transition-colors duration-200 rounded-lg"
-                  style={{ borderBottom: "1px solid #e8e8e8" }}>
-                  <p className="text-xl md:text-2xl font-medium text-[#ccc] pt-0.5">{step.num}</p>
-                  <p className="text-[18px] md:text-xl font-semibold text-[#111] self-center">{step.title}</p>
-                  <p className="text-[#555] text-[17px] leading-relaxed col-start-2 md:col-start-auto">{step.desc}</p>
-                </div>
-              </Reveal>
+              <ProcessItem
+                key={i}
+                step={step}
+                isOpen={openProcess === i}
+                onToggle={() => setOpenProcess(openProcess === i ? null : i)}
+              />
             ))}
           </div>
         </div>
@@ -977,49 +1005,53 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Contact ── */}
-      <section id="contact" className="py-[120px] max-md:py-[72px]">
+      {/* ── Contact — dark ── */}
+      <section id="contact" className="py-[120px] max-md:py-[72px]" style={{ background: "#111" }}>
         <div className="max-w-[1280px] mx-auto px-6 md:px-12">
           <Reveal className="mb-14">
-            <h2 className="text-[#111] font-medium mb-4" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
+            <h2 className="text-white font-medium mb-4" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
               Start a project.
             </h2>
-            <p className="text-[#555] text-[17px] max-w-xl leading-relaxed">
+            <p className="text-white/55 text-[17px] max-w-xl leading-relaxed">
               Tell us what you're building. We'll get back within 24 hours.
             </p>
           </Reveal>
           <div className="grid lg:grid-cols-2 gap-16 lg:gap-24">
-            <div style={{ borderTop: "1px solid #e8e8e8" }}>
+            <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}>
               {[
-                { label: "Our work", value: "cselcincy.org", href: "https://cselcincy.org" },
-                { label: "Availability", value: "Taking new projects now" },
-                { label: "Rate", value: "$35–50 per hour" },
-                { label: "Response time", value: "Within 24 hours" },
+                { label: "Our work",      value: "cselcincy.org",           href: "https://cselcincy.org" },
+                { label: "Availability",  value: "Taking new projects now"                              },
+                { label: "Rate",          value: "$35–50 per hour"                                      },
+                { label: "Response time", value: "Within 24 hours"                                      },
               ].map((item, i) => (
                 <Reveal key={i} delay={i * 0.07}>
-                  <div className="py-5 flex items-center justify-between gap-4" style={{ borderBottom: "1px solid #e8e8e8" }}>
-                    <p className="text-[14px] text-[#999] w-32 shrink-0">{item.label}</p>
+                  <div className="py-5 flex items-center justify-between gap-4"
+                    style={{ borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+                    <p className="text-[14px] text-white/35 w-32 shrink-0">{item.label}</p>
                     {item.href ? (
                       <a href={item.href} target="_blank" rel="noopener noreferrer"
-                        className="text-xl font-medium text-[#111] hover:opacity-60 transition-opacity underline-offset-4 hover:underline">
+                        className="text-xl font-medium text-white hover:opacity-60 transition-opacity underline-offset-4 hover:underline">
                         {item.value}
                       </a>
                     ) : (
-                      <p className="text-xl font-medium text-[#111]">{item.value}</p>
+                      <p className="text-xl font-medium text-white">{item.value}</p>
                     )}
                   </div>
                 </Reveal>
               ))}
             </div>
+            {/* Form in a raised dark card */}
             <Reveal delay={0.1}>
-              <ContactForm />
+              <div className="rounded-2xl p-8" style={{ background: "#1a1a1a", border: "1px solid rgba(255,255,255,0.08)" }}>
+                <ContactForm />
+              </div>
             </Reveal>
           </div>
         </div>
       </section>
 
-      {/* ── Footer ── */}
-      <footer style={{ borderTop: "1px solid #e8e8e8", background: "#fff" }}>
+      {/* ── Footer — dark ── */}
+      <footer style={{ background: "#0a0a0a", borderTop: "1px solid rgba(255,255,255,0.07)" }}>
         <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-14">
             {[
@@ -1027,49 +1059,49 @@ export default function Home() {
                 heading: "Services",
                 links: [
                   { label: "Business Sites", id: "services" },
-                  { label: "E-Commerce", id: "services" },
-                  { label: "Non-Profits", id: "services" },
-                  { label: "Portfolios", id: "services" },
+                  { label: "E-Commerce",     id: "services" },
+                  { label: "Non-Profits",    id: "services" },
+                  { label: "Portfolios",     id: "services" },
                 ],
               },
               {
                 heading: "Work",
                 links: [
-                  { label: "Our Portfolio", id: "work" },
-                  { label: "CSEL Cincinnati", url: "https://cselcincy.org" },
-                  { label: "Capabilities", id: "capabilities" },
+                  { label: "Our Portfolio",    id: "work"         },
+                  { label: "CSEL Cincinnati",  url: "https://cselcincy.org" },
+                  { label: "Capabilities",     id: "capabilities" },
                 ],
               },
               {
                 heading: "Company",
                 links: [
                   { label: "Process", id: "capabilities" },
-                  { label: "Pricing", id: "pricing" },
-                  { label: "FAQ", id: "contact" },
+                  { label: "Pricing", id: "pricing"      },
+                  { label: "FAQ",     id: "contact"      },
                 ],
               },
               {
                 heading: "Start",
                 links: [
                   { label: "Get a quote", id: "contact" },
-                  { label: "Contact us", id: "contact" },
+                  { label: "Contact us",  id: "contact" },
                 ],
               },
             ].map((col, ci) => (
               <div key={ci}>
-                <p className="text-[13px] font-semibold text-[#111] mb-4 uppercase tracking-widest">{col.heading}</p>
+                <p className="text-[11px] font-semibold text-white/40 mb-4 uppercase tracking-widest">{col.heading}</p>
                 <div className="space-y-2.5">
                   {col.links.map((link, li) => (
                     <div key={li}>
                       {"url" in link ? (
                         <a href={link.url as string} target="_blank" rel="noopener noreferrer"
-                          className="text-[13px] text-[#555] hover:text-[#111] transition-colors block">
+                          className="text-[13px] text-white/50 hover:text-white transition-colors block">
                           {link.label}
                         </a>
                       ) : (
                         <button
                           onClick={() => document.getElementById(link.id as string)?.scrollIntoView({ behavior: "smooth" })}
-                          className="text-[13px] text-[#555] hover:text-[#111] transition-colors text-left">
+                          className="text-[13px] text-white/50 hover:text-white transition-colors text-left">
                           {link.label}
                         </button>
                       )}
@@ -1081,12 +1113,12 @@ export default function Home() {
           </div>
 
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8"
-            style={{ borderTop: "1px solid #e8e8e8" }}>
-            <p className="text-[12px] text-[#999]">© {new Date().getFullYear()} Vaulted Web Solutions. All rights reserved.</p>
+            style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+            <p className="text-[12px] text-white/25">© {new Date().getFullYear()} Vaulted Web Solutions. All rights reserved.</p>
             <div className="flex gap-5">
               {["Twitter", "LinkedIn", "GitHub"].map(s => (
                 <a key={s} href="#"
-                  className="text-[12px] text-[#999] hover:text-[#111] transition-colors"
+                  className="text-[12px] text-white/30 hover:text-white transition-colors"
                   data-testid={`link-social-${s.toLowerCase()}`}>{s}</a>
               ))}
             </div>
