@@ -10,112 +10,48 @@ import {
   AnimatePresence,
 } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
-import { ArrowRight, ExternalLink, RotateCcw, ChevronDown, ArrowUp } from "lucide-react";
+import { ArrowRight, ExternalLink, RotateCcw, ChevronDown } from "lucide-react";
 
-/* ─── Custom Cursor ──────────────────────────────────────────────── */
+/* ─── Hero scenes ────────────────────────────────────────────────── */
 
-function CustomCursor() {
-  const cursorRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const cursor = cursorRef.current;
-    if (!cursor || window.innerWidth <= 768) return;
-
-    let rafId: number;
-    const onMove = (e: MouseEvent) => {
-      cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(() => {
-        cursor.style.transform = `translate(${e.clientX - 12}px, ${e.clientY - 12}px)`;
-      });
-    };
-
-    const onEnter = () => cursor.classList.add("cursor-grow");
-    const onLeave = () => cursor.classList.remove("cursor-grow");
-
-    document.addEventListener("mousemove", onMove);
-    const els = document.querySelectorAll("a, button");
-    els.forEach(el => {
-      el.addEventListener("mouseenter", onEnter);
-      el.addEventListener("mouseleave", onLeave);
-    });
-
-    return () => {
-      document.removeEventListener("mousemove", onMove);
-      cancelAnimationFrame(rafId);
-    };
-  }, []);
-
-  return <div ref={cursorRef} id="vaulted-cursor" />;
-}
-
-/* ─── Marquee ────────────────────────────────────────────────────── */
-
-function Marquee() {
-  const text = "CUSTOM CODE\u00A0\u00A0·\u00A0\u00A0NO TEMPLATES\u00A0\u00A0·\u00A0\u00A0HAND-WRITTEN\u00A0\u00A0·\u00A0\u00A0FAST\u00A0\u00A0·\u00A0\u00A0SECURE\u00A0\u00A0·\u00A0\u00A0BUILT TO LAST\u00A0\u00A0·\u00A0\u00A0";
-  const repeated = text.repeat(8);
-  return (
-    <div
-      className="overflow-hidden py-4"
-      style={{ borderTop: "1px solid rgba(255,255,255,0.08)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}
-    >
-      <div className="marquee-track">
-        <span
-          className="text-[11px] pr-0"
-          style={{ color: "#c9a96e", letterSpacing: "0.2em", fontFamily: "var(--font-body)" }}
-        >
-          {repeated}
-        </span>
-      </div>
-    </div>
-  );
-}
-
-/* ─── Hero data ──────────────────────────────────────────────────── */
-
-const heroSlides = [
-  { img: "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?auto=format&fit=crop&w=1920&q=80" },
-  { img: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1920&q=80" },
-  { img: "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?auto=format&fit=crop&w=1920&q=80" },
+const heroScenes = [
+  "https://images.unsplash.com/photo-1512428813834-c702c7702b78?auto=format&fit=crop&w=1920&q=80",
+  "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=1920&q=80",
+  "https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?auto=format&fit=crop&w=1920&q=80",
+  "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=1920&q=80",
+  "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=1920&q=80",
 ];
 
-/* ─── Service cards ──────────────────────────────────────────────── */
+/* ─── Service tabs data ──────────────────────────────────────────── */
 
-const serviceCards = [
+const serviceTabs = [
   {
-    id: "business",
     label: "Business Sites",
-    category: "Business",
-    img: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=800&q=80",
-    title: "Launch a professional website",
-    desc: "Establish trust and generate leads with a site built to represent your brand at its best.",
+    heading: "Launch a professional website",
+    desc: "Establish trust and generate leads with a site built to represent your brand at its best. No templates — hand-coded from scratch.",
     tags: "Agencies · Consultants · Retailers",
+    img: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=900&q=80",
   },
   {
-    id: "ecommerce",
     label: "E-Commerce",
-    category: "E-Commerce",
-    img: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=800&q=80",
-    title: "Sell online with confidence",
-    desc: "Custom storefronts with clean checkout flows, payment integrations, and inventory management.",
+    heading: "Sell online with confidence",
+    desc: "Custom storefronts with clean checkout flows, payment integrations, and inventory management. Built to convert.",
     tags: "Artisans · Retailers · Limited Releases",
+    img: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=900&q=80",
   },
   {
-    id: "nonprofit",
     label: "Non-Profits",
-    category: "Non-Profits",
-    img: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80",
-    title: "Amplify your mission",
+    heading: "Amplify your mission",
     desc: "Donation processing, event management, and resource systems — built for organizations like CSEL Cincinnati.",
     tags: "Non-profits · Advocacy Groups · Foundations",
+    img: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=900&q=80",
   },
   {
-    id: "portfolio",
     label: "Portfolios",
-    category: "Portfolios",
-    img: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=800&q=80",
-    title: "Show your work beautifully",
+    heading: "Show your work beautifully",
     desc: "Image-forward layouts that put your projects first. Case studies, galleries, and booking built in.",
     tags: "Designers · Photographers · Architects",
+    img: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=900&q=80",
   },
 ];
 
@@ -125,32 +61,32 @@ const featureCards = [
   {
     title: "Hand-written code",
     desc: "Every line crafted by a human. No page builders, no template bloat — just clean, purposeful code.",
-    icon: "{ }",
+    preview: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80",
   },
   {
     title: "Security hardening",
     desc: "No vulnerable plugins. No generic attack vectors. Built to resist threats from the ground up.",
-    icon: "🔒",
+    preview: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=600&q=80",
   },
   {
     title: "Performance tuned",
     desc: "Optimized for Core Web Vitals. Fast on every device, every connection, every time.",
-    icon: "⚡",
+    preview: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80",
   },
   {
     title: "Analytics-ready",
     desc: "Proper metadata, sitemaps, and structured data. Built for both search engines and real people.",
-    icon: "📊",
+    preview: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80",
   },
   {
     title: "Ongoing support",
     desc: "We don't vanish after launch. Monthly updates, content changes, and feature additions as you grow.",
-    icon: "🔄",
+    preview: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=600&q=80",
   },
   {
     title: "You own it",
     desc: "Your code is yours. No subscription lock-in. Host it anywhere, with anyone, forever.",
-    icon: "🔑",
+    preview: "https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?auto=format&fit=crop&w=600&q=80",
   },
 ];
 
@@ -179,29 +115,83 @@ const processSteps = [
 /* ─── FAQ ────────────────────────────────────────────────────────── */
 
 const faqs = [
-  {
-    q: "How long does a typical project take?",
-    a: "Most projects run 2–6 weeks depending on scope. A simple business site can be live in two weeks. Larger platforms with custom features take longer. We'll give you a realistic timeline during our discovery call — no inflated estimates to manage expectations later.",
-  },
-  {
-    q: "Do I need to provide my own designs?",
-    a: "No. We handle everything from visual direction to final code. If you have brand assets, logos, or inspiration, we'll incorporate them. If you're starting from scratch, we'll develop a direction together before writing a single line of code.",
-  },
-  {
-    q: "Can you work with my existing domain or hosting provider?",
-    a: "Yes — we deploy to any provider you prefer. AWS, DigitalOcean, Vercel, Netlify, your current host. We handle DNS configuration and zero-downtime launches. You're never locked into our infrastructure.",
-  },
-  {
-    q: "What do I actually own after the project is done?",
-    a: "Everything. The code, the design files, the domain, the data. There's no ongoing license fee to keep your site running. If you ever want to work with a different developer, you can hand them the full codebase.",
-  },
-  {
-    q: "Is there a minimum project size or budget?",
-    a: "No minimums. We bill hourly at $35–$50/hr and will always give you an upfront estimate. Small jobs are just as welcome as large ones — and many of our longest client relationships started with a single small fix.",
-  },
+  { q: "How long does a typical project take?", a: "Most projects run 2–6 weeks depending on scope. A simple business site can be live in two weeks. Larger platforms with custom features take longer. We'll give you a realistic timeline during our discovery call — no inflated estimates to manage expectations later." },
+  { q: "Do I need to provide my own designs?", a: "No. We handle everything from visual direction to final code. If you have brand assets, logos, or inspiration, we'll incorporate them. If you're starting from scratch, we'll develop a direction together before writing a single line of code." },
+  { q: "Can you work with my existing domain or hosting provider?", a: "Yes — we deploy to any provider you prefer. AWS, DigitalOcean, Vercel, Netlify, your current host. We handle DNS configuration and zero-downtime launches. You're never locked into our infrastructure." },
+  { q: "What do I actually own after the project is done?", a: "Everything. The code, the design files, the domain, the data. There's no ongoing license fee to keep your site running. If you ever want to work with a different developer, you can hand them the full codebase." },
+  { q: "Is there a minimum project size or budget?", a: "No minimums. We bill hourly at $35–$50/hr and will always give you an upfront estimate. Small jobs are just as welcome as large ones — and many of our longest client relationships started with a single small fix." },
 ];
 
-/* ─── Animation demo helpers ─────────────────────────────────────── */
+/* ─── Slot machine stat ──────────────────────────────────────────── */
+
+function SlotStat({ target, suffix, label }: { target: number; suffix: string; label: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-40px" });
+  const [display, setDisplay] = useState(0);
+  const triggered = useRef(false);
+
+  useEffect(() => {
+    if (!inView || triggered.current) return;
+    triggered.current = true;
+    const duration = 2200;
+    const settleAt = duration - 400;
+    const startTime = Date.now();
+
+    const tick = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      if (elapsed >= settleAt) {
+        setDisplay(target);
+        clearInterval(tick);
+        return;
+      }
+      const progress = elapsed / settleAt;
+      const maxVal = Math.max(target * 2, target + 20);
+      const decay = 1 - progress;
+      setDisplay(Math.floor(target * progress + Math.random() * target * decay * 0.5));
+    }, 80);
+
+    return () => clearInterval(tick);
+  }, [inView, target]);
+
+  return (
+    <div ref={ref} className="text-center px-8">
+      <div className="text-5xl md:text-6xl font-semibold text-[#111] tabular-nums leading-none tracking-tight">
+        {display}{suffix}
+      </div>
+    </div>
+  );
+}
+
+/* ─── Hero mockup card ───────────────────────────────────────────── */
+
+function MockupCard() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 60 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: 0.4, duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
+      className="floating-card rounded-2xl overflow-hidden w-full max-w-[460px]"
+      style={{ boxShadow: "0 32px 80px rgba(0,0,0,0.35)" }}
+    >
+      <div className="bg-[#f0f0f0] px-4 py-3 flex items-center gap-3">
+        <div className="flex gap-1.5">
+          <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]" />
+          <div className="w-2.5 h-2.5 rounded-full bg-[#febc2e]" />
+          <div className="w-2.5 h-2.5 rounded-full bg-[#28c840]" />
+        </div>
+        <div className="flex-1 bg-white rounded px-3 py-1 text-[11px] text-[#999] truncate">cselcincy.org</div>
+      </div>
+      <img
+        src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=800&q=80"
+        alt="Website preview"
+        className="w-full block"
+        style={{ height: "340px", objectFit: "cover", objectPosition: "top" }}
+      />
+    </motion.div>
+  );
+}
+
+/* ─── Animation demos ────────────────────────────────────────────── */
 
 function TiltDemo() {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -224,19 +214,19 @@ function TiltDemo() {
     <div ref={cardRef} onMouseMove={onMove} onMouseLeave={onLeave}
       className="w-full h-full flex items-center justify-center" style={{ perspective: 1000 }}>
       <motion.div style={{ rotateX, rotateY, transformStyle: "preserve-3d" }} className="relative w-36 h-44">
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3"
-          style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", transform: "translateZ(0px)" }}>
+        <div className="absolute inset-0 bg-[#111] flex flex-col items-center justify-center gap-3"
+          style={{ transform: "translateZ(0px)" }}>
           <motion.div animate={{ scale: [1, 1.05, 1] }} transition={{ repeat: Infinity, duration: 3 }}
-            className="w-10 h-10 rounded-full" style={{ background: "#c9a96e", opacity: 0.7 }} />
-          <div className="w-20 h-2" style={{ background: "rgba(255,255,255,0.15)" }} />
-          <div className="w-14 h-2" style={{ background: "rgba(255,255,255,0.08)" }} />
+            className="w-10 h-10 rounded-full bg-white/20" />
+          <div className="w-20 h-2 bg-white/20" />
+          <div className="w-14 h-2 bg-white/15" />
         </div>
-        <div className="absolute -top-4 -right-4 w-14 h-14"
-          style={{ border: "1px solid rgba(201,169,110,0.4)", background: "rgba(201,169,110,0.06)", transform: "translateZ(32px)" }} />
-        <div className="absolute -bottom-3 -left-3 w-9 h-9"
-          style={{ background: "rgba(201,169,110,0.12)", border: "1px solid rgba(201,169,110,0.3)", transform: "translateZ(18px)" }} />
+        <div className="absolute -top-4 -right-4 w-14 h-14 border border-[#ddd] bg-white"
+          style={{ transform: "translateZ(32px)" }} />
+        <div className="absolute -bottom-3 -left-3 w-9 h-9 bg-[#f5f5f5] border border-[#ddd]"
+          style={{ transform: "translateZ(18px)" }} />
         <motion.div className="absolute inset-0 pointer-events-none"
-          style={{ background: `radial-gradient(circle at ${glowX}% ${glowY}%, rgba(201,169,110,0.12) 0%, transparent 65%)`, transform: "translateZ(1px)" }} />
+          style={{ background: `radial-gradient(circle at ${glowX}% ${glowY}%, rgba(255,255,255,0.12) 0%, transparent 65%)`, transform: "translateZ(1px)" }} />
       </motion.div>
     </div>
   );
@@ -254,7 +244,7 @@ function TextRevealDemo() {
               <div key={i} className="overflow-hidden">
                 <motion.span initial={{ y: 56, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: i * 0.14, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-                  className="font-display text-3xl md:text-4xl block text-white">{w}
+                  className="text-3xl md:text-4xl font-semibold text-[#111] block">{w}
                 </motion.span>
               </div>
             ))}
@@ -262,8 +252,7 @@ function TextRevealDemo() {
         </AnimatePresence>
       </div>
       <button onClick={() => setKey(k => k + 1)}
-        className="inline-flex items-center gap-2 text-xs px-4 py-2 transition-all"
-        style={{ border: "1px solid rgba(255,255,255,0.12)", color: "#888" }}
+        className="inline-flex items-center gap-2 text-xs text-[#999] border border-[#e8e8e8] px-4 py-2 rounded-full hover:border-[#111] hover:text-[#111] transition-all"
         data-testid="button-replay-text">
         <RotateCcw className="w-3 h-3" /> Replay
       </button>
@@ -305,17 +294,16 @@ function CounterDemo() {
       <div className="grid grid-cols-3 gap-4 w-full">
         {targets.map((_, i) => (
           <div key={i} className="text-center">
-            <p className="font-display text-4xl md:text-5xl tabular-nums" style={{ color: "#c9a96e" }}
+            <p className="text-4xl md:text-5xl font-semibold text-[#111] tabular-nums"
               data-testid={`stat-count-${i}`}>
               {counts[i]}{suffixes[i]}
             </p>
-            <p className="text-xs mt-2" style={{ color: "#888" }}>{labels[i]}</p>
+            <p className="text-xs text-[#999] mt-2">{labels[i]}</p>
           </div>
         ))}
       </div>
       <button onClick={() => { played.current = false; run(); }}
-        className="inline-flex items-center gap-2 text-xs px-4 py-2 transition-all"
-        style={{ border: "1px solid rgba(255,255,255,0.12)", color: "#888" }}
+        className="inline-flex items-center gap-2 text-xs text-[#999] border border-[#e8e8e8] px-4 py-2 rounded-full hover:border-[#111] hover:text-[#111] transition-all"
         data-testid="button-replay-counter">
         <RotateCcw className="w-3 h-3" /> Replay
       </button>
@@ -347,41 +335,11 @@ function ParallaxDemo() {
   return (
     <div ref={ref} onMouseMove={onMove} onMouseLeave={() => { mx.set(0); my.set(0); }}
       className="w-full h-full flex items-center justify-center relative overflow-hidden">
-      <motion.div style={{ x: bX, y: bY }} className="absolute w-40 h-40 border border-white/10" />
-      <motion.div style={{ x: mX, y: mY, border: "1px solid rgba(201,169,110,0.3)", background: "rgba(201,169,110,0.05)" }} className="absolute w-24 h-24" />
-      <motion.div style={{ x: fX, y: fY, background: "#c9a96e" }} className="absolute w-12 h-12" />
-      <motion.div style={{ x: aX, y: aY }} className="absolute w-6 h-6 border border-white/20 top-[calc(50%-40px)] left-[calc(50%+36px)]" />
-      <motion.div style={{ x: cX, y: cY, background: "rgba(201,169,110,0.2)" }} className="absolute w-5 h-5 bottom-[calc(50%-40px)] left-[calc(50%-50px)]" />
-    </div>
-  );
-}
-
-/* ─── Animated stat ──────────────────────────────────────────────── */
-
-function AnimStat({ target, prefix = "", suffix = "", label }: { target: number; prefix?: string; suffix?: string; label: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
-  const [n, setN] = useState(0);
-  const raf = useRef<number>(0);
-
-  useEffect(() => {
-    if (!inView) return;
-    const start = Date.now();
-    const tick = () => {
-      const t = Math.min((Date.now() - start) / 1800, 1);
-      setN(Math.round(target * (1 - Math.pow(1 - t, 3))));
-      if (t < 1) raf.current = requestAnimationFrame(tick);
-    };
-    raf.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf.current);
-  }, [inView, target]);
-
-  return (
-    <div ref={ref} className="text-center">
-      <p className="font-display text-5xl md:text-6xl lg:text-7xl tracking-tight tabular-nums leading-none" style={{ color: "#c9a96e" }}>
-        {prefix}{n}{suffix}
-      </p>
-      <p className="text-sm mt-3" style={{ color: "#888" }}>{label}</p>
+      <motion.div style={{ x: bX, y: bY }} className="absolute w-40 h-40 border border-[#ddd]" />
+      <motion.div style={{ x: mX, y: mY }} className="absolute w-24 h-24 border border-[#ccc] bg-[#f5f5f5]" />
+      <motion.div style={{ x: fX, y: fY }} className="absolute w-12 h-12 bg-[#111]" />
+      <motion.div style={{ x: aX, y: aY }} className="absolute w-6 h-6 border border-[#ddd] top-[calc(50%-40px)] left-[calc(50%+36px)]" />
+      <motion.div style={{ x: cX, y: cY }} className="absolute w-5 h-5 bg-[#e0e0e0] bottom-[calc(50%-40px)] left-[calc(50%-50px)]" />
     </div>
   );
 }
@@ -390,34 +348,34 @@ function AnimStat({ target, prefix = "", suffix = "", label }: { target: number;
 
 function DemoCard({ tag, label, desc, children }: { tag: string; label: string; desc: string; children: React.ReactNode }) {
   return (
-    <div className="glass-card flex flex-col overflow-hidden" style={{ borderRadius: 0 }}>
-      <div className="px-6 pt-6 pb-3 flex items-center justify-between" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-        <span className="eyebrow">{tag}</span>
-        <span className="text-[10px] font-mono" style={{ color: "rgba(255,255,255,0.2)" }}>live</span>
+    <div className="feature-card flex flex-col overflow-hidden">
+      <div className="px-6 pt-6 pb-3 flex items-center justify-between" style={{ borderBottom: "1px solid #f0f0f0" }}>
+        <span className="text-[11px] font-medium text-[#999] uppercase tracking-widest">{tag}</span>
+        <span className="text-[10px] text-[#ccc] font-mono">live</span>
       </div>
       <div className="flex-1 min-h-[220px] md:min-h-[260px] px-6 py-4">{children}</div>
-      <div className="px-6 pb-7 pt-4" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-        <p className="font-display text-lg text-white mb-1">{label}</p>
-        <p className="text-sm" style={{ color: "#888" }}>{desc}</p>
+      <div className="px-6 pb-7 pt-4" style={{ borderTop: "1px solid #f0f0f0" }}>
+        <p className="text-lg font-semibold text-[#111] mb-1">{label}</p>
+        <p className="text-sm text-[#555]">{desc}</p>
       </div>
     </div>
   );
 }
 
-/* ─── FAQ Item ───────────────────────────────────────────────────── */
+/* ─── FAQ item ───────────────────────────────────────────────────── */
 
 function FAQItem({ q, a, isOpen, onToggle }: { q: string; a: string; isOpen: boolean; onToggle: () => void }) {
   return (
-    <div style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+    <div style={{ borderBottom: "1px solid #e8e8e8" }}>
       <button
-        className="w-full flex items-center justify-between py-6 text-left group"
+        className="w-full flex items-center justify-between py-5 text-left group"
         onClick={onToggle}
         data-testid={`faq-${q.slice(0, 20).replace(/\s/g, "-").toLowerCase()}`}
       >
-        <span className="font-display text-lg md:text-xl text-white group-hover:text-[#c9a96e] transition-colors pr-8">{q}</span>
+        <span className="text-[17px] font-medium text-[#111] group-hover:opacity-70 transition-opacity pr-8">{q}</span>
         <ChevronDown
-          className="flex-shrink-0 transition-transform duration-300 text-white/40"
-          size={20}
+          className="flex-shrink-0 text-[#999] transition-transform duration-300"
+          size={18}
           style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
         />
       </button>
@@ -427,10 +385,10 @@ function FAQItem({ q, a, isOpen, onToggle }: { q: string; a: string; isOpen: boo
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="overflow-hidden"
           >
-            <p className="pb-6 text-base leading-relaxed" style={{ color: "#888" }}>{a}</p>
+            <p className="pb-5 text-[17px] leading-relaxed text-[#555]">{a}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -438,303 +396,282 @@ function FAQItem({ q, a, isOpen, onToggle }: { q: string; a: string; isOpen: boo
   );
 }
 
+/* ─── Reveal wrapper ─────────────────────────────────────────────── */
+
+function Reveal({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.55, delay, ease: [0.25, 0.46, 0.45, 0.94] }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 /* ─── Main page ──────────────────────────────────────────────────── */
 
 export default function Home() {
-  const [slide, setSlide] = useState(0);
-  const [activeService, setActiveService] = useState("All");
+  const [scene, setScene] = useState(0);
+  const [activeTab, setActiveTab] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const heroY = useTransform(scrollYProgress, [0, 1], [0, 120]);
-  const heroOp = useTransform(scrollYProgress, [0, 0.65], [1, 0]);
 
   useEffect(() => {
-    const id = setInterval(() => setSlide(s => (s + 1) % heroSlides.length), 6000);
+    const id = setInterval(() => setScene(s => (s + 1) % heroScenes.length), 4500);
     return () => clearInterval(id);
   }, []);
 
-  const serviceCategories = ["All", ...serviceCards.map(c => c.category)];
-  const filteredServices = activeService === "All" ? serviceCards : serviceCards.filter(c => c.category === activeService);
-
-  const wordVariants = {
-    hidden: { opacity: 0, y: 40 },
-    visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: { delay: 0.4 + i * 0.12, duration: 0.7, ease: [0.22, 1, 0.36, 1] },
-    }),
-  };
+  const heroReveal = (delay: number) => ({
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6, delay, ease: [0.25, 0.46, 0.45, 0.94] as any },
+    style: { animationFillMode: "both" as const },
+  });
 
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
-      <CustomCursor />
+    <div className="min-h-screen bg-white text-[#111] overflow-x-hidden">
       <Navbar />
 
       {/* ── Hero ── */}
-      <section ref={heroRef} className="relative h-screen min-h-[600px] flex flex-col items-center justify-center overflow-hidden">
-        {heroSlides.map((s, i) => (
-          <motion.div
+      <section ref={heroRef} className="relative min-h-screen flex items-center overflow-hidden">
+        {/* Background scenes */}
+        {heroScenes.map((src, i) => (
+          <div
             key={i}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: i === slide ? 1 : 0 }}
-            transition={{ duration: 1.4, ease: "easeInOut" }}
-            className="absolute inset-0"
-          >
-            <img
-              src={s.img}
-              className={`w-full h-full object-cover ${i === slide ? "ken-burns-active" : ""}`}
-              alt=""
-              loading={i === 0 ? "eager" : "lazy"}
-            />
-          </motion.div>
+            className="absolute inset-0 bg-cover bg-center"
+            style={{
+              backgroundImage: `url(${src})`,
+              opacity: i === scene ? 1 : 0,
+              transition: "opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1)",
+            }}
+          />
         ))}
-        <div className="absolute inset-0" style={{ background: "rgba(10,10,10,0.72)" }} />
-        <div className="absolute bottom-0 left-0 right-0 h-64" style={{ background: "linear-gradient(to top, rgba(10,10,10,0.8), transparent)" }} />
+        <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.38)" }} />
 
-        <motion.div style={{ y: heroY, opacity: heroOp }}
-          className="relative z-10 text-center px-6 max-w-5xl mx-auto w-full">
-          <motion.p
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.7 }}
-            className="eyebrow mb-8 block"
-          >
-            Custom Web Development
-          </motion.p>
+        <div className="relative z-10 w-full max-w-[1280px] mx-auto px-6 md:px-12 py-32 md:py-0 md:min-h-screen flex items-center">
+          <div className="flex flex-col md:flex-row items-center gap-12 md:gap-16 w-full">
 
-          <div className="flex flex-wrap justify-center gap-x-5 md:gap-x-6 mb-10"
-            style={{ fontSize: "clamp(2.6rem,8vw,6rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}>
-            {["A", "website", "built", "right."].map((word, i) => (
-              <motion.span
-                key={i}
-                custom={i}
-                variants={wordVariants}
-                initial="hidden"
-                animate="visible"
-                className="font-display text-white block"
-              >
-                {word}
-              </motion.span>
-            ))}
+            {/* Left: text */}
+            <div className="flex-1 min-w-0 max-w-[540px]">
+              <motion.p {...heroReveal(0.1)}
+                className="text-white/70 text-[11px] font-medium tracking-[0.2em] uppercase mb-5">
+                Vaulted Web Solutions
+              </motion.p>
+              <motion.h1 {...heroReveal(0.25)}
+                className="text-white font-medium leading-[1.1] tracking-tight mb-2"
+                style={{ fontSize: "clamp(2.4rem,6vw,4.5rem)", letterSpacing: "-0.02em" }}>
+                A website
+              </motion.h1>
+              <motion.h1 {...heroReveal(0.38)}
+                className="text-white font-medium leading-[1.1] tracking-tight mb-7"
+                style={{ fontSize: "clamp(2.4rem,6vw,4.5rem)", letterSpacing: "-0.02em" }}>
+                built right.
+              </motion.h1>
+              <motion.p {...heroReveal(0.52)}
+                className="text-white/85 text-[17px] leading-relaxed mb-8"
+                style={{ maxWidth: 420 }}>
+                Hand-written code. No templates. No compromises.
+              </motion.p>
+              <motion.div {...heroReveal(0.68)} className="flex flex-wrap items-center gap-4">
+                <button
+                  onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+                  className="sqsp-btn-white"
+                  data-testid="button-start-project">
+                  Get started
+                </button>
+                <a href="https://cselcincy.org" target="_blank" rel="noopener noreferrer"
+                  className="text-white text-[14px] underline underline-offset-4 hover:opacity-70 transition-opacity">
+                  See our work
+                </a>
+              </motion.div>
+            </div>
+
+            {/* Right: floating mockup card */}
+            <div className="hidden md:flex flex-1 justify-end">
+              <MockupCard />
+            </div>
+
           </div>
+        </div>
 
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7, duration: 0.7 }}
-            className="text-lg mb-10"
-            style={{ color: "rgba(255,255,255,0.55)" }}
-          >
-            Hand-written code. No templates. No compromises.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.9, duration: 0.7 }}
-          >
-            <button
-              onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-              className="btn-primary"
-              data-testid="button-start-project"
-            >
-              Get started <ArrowRight size={14} />
-            </button>
-          </motion.div>
-        </motion.div>
-
+        {/* Scene indicators */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-          {heroSlides.map((_, i) => (
+          {heroScenes.map((_, i) => (
             <button
               key={i}
-              onClick={() => setSlide(i)}
-              className="h-[2px] transition-all duration-500"
-              style={{ width: i === slide ? 32 : 12, background: i === slide ? "#c9a96e" : "rgba(255,255,255,0.3)" }}
+              onClick={() => setScene(i)}
+              className="h-[2px] transition-all duration-500 rounded-full"
+              style={{ width: i === scene ? 28 : 10, background: i === scene ? "#fff" : "rgba(255,255,255,0.4)" }}
             />
           ))}
         </div>
       </section>
 
-      {/* ── Marquee ── */}
-      <Marquee />
-
-      {/* ── Stats ── */}
-      <section className="py-24 md:py-32" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-        <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20">
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-center mb-16 md:mb-20 text-base"
-            style={{ color: "#888" }}
-          >
-            Join businesses that chose real code over page builders.
-          </motion.p>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-14">
-            <AnimStat target={100} suffix="%" label="Custom code, always" />
-            <AnimStat target={100} suffix="%" label="Clients who own their code" />
-            <AnimStat target={35} prefix="$" suffix="+/hr" label="Starting hourly rate" />
-            <AnimStat target={24} suffix="hr" label="Average response time" />
+      {/* ── Stats strip ── */}
+      <section style={{ borderTop: "1px solid #e8e8e8", borderBottom: "1px solid #e8e8e8" }}>
+        <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-14">
+          <Reveal className="mb-10">
+            <p className="text-center text-[#555] text-[17px]">Join businesses that chose real code over page builders.</p>
+          </Reveal>
+          <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-[#e8e8e8]">
+            {[
+              { target: 100, suffix: "%", label: "Custom code, always" },
+              { target: 100, suffix: "%", label: "Clients who own their code" },
+              { target: 35, suffix: "+/hr", label: "Starting hourly rate ($)" },
+              { target: 24, suffix: "hr", label: "Average response time" },
+            ].map((s, i) => (
+              <div key={i} className="py-6">
+                <SlotStat target={s.target} suffix={s.suffix} label={s.label} />
+                <p className="text-center text-[#555] text-[15px] mt-2">{s.label}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ── Services ── */}
-      <section id="services" className="py-24 md:py-32">
-        <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 mb-10">
-          <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }} transition={{ duration: 0.7 }}>
-            <p className="eyebrow mb-5">What we build</p>
-            <h2 className="font-display text-4xl md:text-5xl lg:text-[3.5rem] text-white mb-4 leading-[1.1]">
-              You deserve a website<br />that works.
+      {/* ── Services (pill tab switcher) ── */}
+      <section id="services" className="py-[120px] md:py-[120px] max-md:py-[72px]">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-12">
+          <Reveal className="mb-10">
+            <h2 className="text-[#111] font-medium mb-4" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
+              You deserve a website that works.
             </h2>
-            <p className="text-lg md:text-xl max-w-xl" style={{ color: "#888" }}>
+            <p className="text-[#555] text-[17px] max-w-xl leading-relaxed">
               Whatever your business, we build it from scratch — no templates, no shortcuts.
             </p>
-          </motion.div>
+          </Reveal>
 
-          {/* Pill tab filter */}
-          <div className="mt-10 overflow-x-auto scrollbar-hide">
-            <div className="flex gap-3 pb-2 w-max md:w-auto md:flex-wrap">
-              {serviceCategories.map(cat => (
+          {/* Pill tabs */}
+          <div className="overflow-x-auto scrollbar-hide mb-10">
+            <div className="flex gap-2 pb-2 w-max">
+              {serviceTabs.map((tab, i) => (
                 <button
-                  key={cat}
-                  onClick={() => setActiveService(cat)}
-                  className="px-5 py-2 text-sm font-medium transition-all duration-300"
-                  style={activeService === cat
-                    ? { background: "#c9a96e", color: "#0a0a0a", border: "1.5px solid #c9a96e" }
-                    : { background: "transparent", color: "#888", border: "1px solid rgba(255,255,255,0.1)" }
+                  key={i}
+                  onClick={() => setActiveTab(i)}
+                  className="px-5 py-2 text-[14px] rounded-full border transition-all duration-200 whitespace-nowrap"
+                  style={activeTab === i
+                    ? { background: "#111", color: "#fff", border: "1px solid #111" }
+                    : { background: "#fff", color: "#555", border: "1px solid #ddd" }
                   }
-                  data-testid={`pill-${cat.toLowerCase().replace(" ", "-")}`}
+                  data-testid={`tab-service-${i}`}
                 >
-                  {cat}
+                  {tab.label}
                 </button>
               ))}
             </div>
           </div>
-        </div>
 
-        <div className="pl-6 md:pl-12 lg:pl-20 overflow-x-auto scrollbar-hide">
-          <div className="flex gap-5 pb-4 w-max">
-            <AnimatePresence mode="popLayout">
-              {filteredServices.map((card) => (
-                <motion.div
-                  key={card.id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.3 }}
-                  className="flex-shrink-0 w-[300px] md:w-[340px] group cursor-pointer glass-card"
-                  onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-                  data-testid={`service-card-${card.id}`}
-                >
-                  <div className="overflow-hidden aspect-[3/2]">
-                    <img src={card.img} alt={card.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80" loading="lazy" />
-                  </div>
-                  <div className="p-6">
-                    <p className="eyebrow mb-3">{card.label}</p>
-                    <p className="font-display text-xl text-white mb-2">{card.title}</p>
-                    <p className="text-sm leading-relaxed mb-4" style={{ color: "#888" }}>{card.desc}</p>
-                    <p className="text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>Great for: {card.tags}</p>
-                    <div className="mt-4 flex items-center gap-1 text-sm font-medium text-white group-hover:gap-2 transition-all" style={{ color: "#c9a96e" }}>
-                      Start this project <ArrowRight className="w-4 h-4" />
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+          {/* Content panels */}
+          <div className="relative min-h-[340px]">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="grid md:grid-cols-2 gap-12 items-center"
+              >
+                <div>
+                  <p className="text-[11px] font-medium text-[#999] tracking-widest uppercase mb-4">
+                    {serviceTabs[activeTab].label}
+                  </p>
+                  <h3 className="text-[#111] font-medium mb-4" style={{ fontSize: "clamp(1.5rem,3vw,2rem)", letterSpacing: "-0.02em" }}>
+                    {serviceTabs[activeTab].heading}
+                  </h3>
+                  <p className="text-[#555] text-[17px] leading-relaxed mb-6">{serviceTabs[activeTab].desc}</p>
+                  <p className="text-[14px] text-[#999] mb-8">Great for: {serviceTabs[activeTab].tags}</p>
+                  <button
+                    onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+                    className="sqsp-btn-primary"
+                    data-testid={`service-cta-${activeTab}`}
+                  >
+                    Start this project
+                  </button>
+                </div>
+                <div className="overflow-hidden rounded-2xl" style={{ boxShadow: "0 8px 40px rgba(0,0,0,0.10)" }}>
+                  <img
+                    src={serviceTabs[activeTab].img}
+                    alt={serviceTabs[activeTab].heading}
+                    className="w-full h-[320px] object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              </motion.div>
             </AnimatePresence>
           </div>
         </div>
       </section>
 
-      {/* ── Everything included (features) ── */}
-      <section className="py-24 md:py-32" style={{ background: "#0f0f0f" }}>
-        <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 mb-14">
-          <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }} transition={{ duration: 0.7 }}>
-            <p className="eyebrow mb-5">Every project</p>
-            <h2 className="font-display text-4xl md:text-5xl lg:text-[3.5rem] text-white mb-4 leading-[1.1]">
+      {/* ── Feature cards ── */}
+      <section style={{ background: "#fafafa", borderTop: "1px solid #e8e8e8", borderBottom: "1px solid #e8e8e8" }}
+        className="py-[120px] max-md:py-[72px]">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-12">
+          <Reveal className="mb-14">
+            <h2 className="text-[#111] font-medium mb-4" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
               Everything you need.<br />Nothing you don't.
             </h2>
-            <p className="text-lg md:text-xl max-w-xl" style={{ color: "#888" }}>
+            <p className="text-[#555] text-[17px] max-w-xl leading-relaxed">
               Every project includes the full stack — no upsells, no hidden add-ons.
             </p>
-          </motion.div>
+          </Reveal>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {featureCards.map((f, i) => (
+              <Reveal key={i} delay={i * 0.06}>
+                <div className={`feature-card overflow-hidden ${i === 0 ? "shadow-lg" : ""}`}
+                  style={i === 0 ? { transform: "scale(1.02)", boxShadow: "0 8px 40px rgba(0,0,0,0.12)" } : {}}>
+                  <div className="p-8 pb-5">
+                    <h3 className="text-[18px] font-semibold text-[#111] mb-2">{f.title}</h3>
+                    <p className="text-[#555] text-[15px] leading-relaxed">{f.desc}</p>
+                  </div>
+                  <img src={f.preview} alt={f.title}
+                    className="w-full h-44 object-cover opacity-90"
+                    loading="lazy" />
+                </div>
+              </Reveal>
+            ))}
+          </div>
         </div>
-
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.07 } } }}
-          className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 grid md:grid-cols-2 lg:grid-cols-3 gap-5"
-        >
-          {featureCards.map((f, i) => (
-            <motion.div
-              key={i}
-              variants={{ hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }}
-              className="glass-card p-8 md:p-10"
-            >
-              <div className="text-3xl mb-5">{f.icon}</div>
-              <p className="font-display text-xl text-white mb-3">{f.title}</p>
-              <p className="text-base leading-relaxed" style={{ color: "#888" }}>{f.desc}</p>
-            </motion.div>
-          ))}
-        </motion.div>
       </section>
 
-      {/* ── Portfolio / "Made with Vaulted" ── */}
-      <section id="work" className="py-24 md:py-32">
-        <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20">
-          <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }} transition={{ duration: 0.7 }}
-            className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+      {/* ── Portfolio ── */}
+      <section id="work" className="py-[120px] max-md:py-[72px]">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-12">
+          <Reveal className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
             <div>
-              <p className="eyebrow mb-5">Our work</p>
-              <h2 className="font-display text-4xl md:text-5xl lg:text-[3.5rem] text-white leading-[1.1] mb-3">
+              <h2 className="text-[#111] font-medium mb-3" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
                 Made with Vaulted
               </h2>
-              <p className="text-lg max-w-md" style={{ color: "#888" }}>
-                Real sites, hand-built for real businesses.
-              </p>
+              <p className="text-[#555] text-[17px] max-w-md leading-relaxed">Real sites, hand-built for real businesses.</p>
             </div>
             <a href="https://cselcincy.org" target="_blank" rel="noopener noreferrer"
-              className="text-sm font-medium inline-flex items-center gap-2 hover:gap-3 transition-all group"
-              style={{ color: "#c9a96e" }}
+              className="inline-flex items-center gap-2 text-[14px] font-medium text-[#111] hover:opacity-60 transition-opacity"
               data-testid="link-view-all-work">
               See our featured project <ArrowRight className="w-4 h-4" />
             </a>
-          </motion.div>
-
+          </Reveal>
           <motion.div
             initial="hidden" whileInView="visible" viewport={{ once: true }}
             variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.06 } } }}
-            className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4"
-          >
+            className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {portfolioSites.map((site, i) => (
-              <motion.div
-                key={i}
-                variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }}
-                className="group relative overflow-hidden cursor-pointer"
-                style={{ aspectRatio: i === 0 ? "16/10" : "4/3" }}
+              <motion.div key={i}
+                variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }}
+                className="group relative overflow-hidden cursor-pointer rounded-xl aspect-[4/3]"
                 onClick={() => site.url !== "#" && window.open(site.url, "_blank")}
-                data-testid={`portfolio-item-${i}`}
-              >
+                data-testid={`portfolio-item-${i}`}>
                 <img src={site.img} alt={site.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-70"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   loading="lazy" />
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  style={{ background: "rgba(10,10,10,0.65)" }} />
-                <div className="absolute inset-0 flex flex-col justify-end p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <p className="font-display text-lg text-white leading-tight">{site.title}</p>
-                  <p className="text-xs mt-1" style={{ color: "#c9a96e" }}>{site.tag}</p>
-                </div>
-                <div className="absolute top-4 left-4 px-3 py-1 text-[10px] tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-opacity"
-                  style={{ background: "rgba(201,169,110,0.15)", border: "1px solid rgba(201,169,110,0.3)", color: "#c9a96e" }}>
-                  {site.tag}
+                  style={{ background: "rgba(0,0,0,0.5)" }} />
+                <div className="absolute inset-0 flex flex-col justify-end p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <p className="text-white font-semibold leading-tight">{site.title}</p>
+                  <p className="text-white/70 text-xs mt-0.5">{site.tag}</p>
                 </div>
               </motion.div>
             ))}
@@ -743,288 +680,307 @@ export default function Home() {
       </section>
 
       {/* ── Animation showcase ── */}
-      <section id="capabilities" className="py-24 md:py-32" style={{ borderTop: "1px solid rgba(255,255,255,0.08)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-        <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20">
-          <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }} transition={{ duration: 0.7 }}
-            className="mb-16 md:mb-20">
-            <p className="eyebrow mb-5">Interactive demos — live on this page</p>
-            <h2 className="font-display text-4xl md:text-5xl lg:text-[3.5rem] text-white mb-4 leading-[1.1]">
+      <section id="capabilities" className="py-[120px] max-md:py-[72px]"
+        style={{ background: "#fafafa", borderTop: "1px solid #e8e8e8", borderBottom: "1px solid #e8e8e8" }}>
+        <div className="max-w-[1280px] mx-auto px-6 md:px-12">
+          <Reveal className="mb-14">
+            <p className="text-[11px] font-medium text-[#999] uppercase tracking-widest mb-3">Interactive demos — live on this page</p>
+            <h2 className="text-[#111] font-medium mb-4" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
               Built to move.
             </h2>
-            <p className="text-lg md:text-xl max-w-2xl" style={{ color: "#888" }}>
+            <p className="text-[#555] text-[17px] max-w-2xl leading-relaxed">
               Every animation below is hand-coded into this page. This is what we build into yours.
             </p>
-          </motion.div>
-
-          <motion.div
-            initial="hidden" whileInView="visible" viewport={{ once: true }}
-            variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.08 } } }}
-            className="grid md:grid-cols-2 gap-5"
-          >
-            <DemoCard tag="3D depth" label="Hover to tilt" desc="Perspective transforms that respond to cursor position in real time.">
-              <TiltDemo />
-            </DemoCard>
-            <DemoCard tag="Text motion" label="Staggered reveal" desc="Words enter the frame in sequence — press replay any time.">
-              <TextRevealDemo />
-            </DemoCard>
-            <DemoCard tag="Scroll trigger" label="Animated counters" desc="Numbers spring to life when they scroll into view.">
-              <CounterDemo />
-            </DemoCard>
-            <DemoCard tag="Parallax" label="Multi-layer depth" desc="Layers move at different speeds, creating depth from a flat surface.">
-              <ParallaxDemo />
-            </DemoCard>
-          </motion.div>
+          </Reveal>
+          <div className="grid md:grid-cols-2 gap-5">
+            <Reveal delay={0}><DemoCard tag="3D depth" label="Hover to tilt" desc="Perspective transforms that respond to cursor position in real time."><TiltDemo /></DemoCard></Reveal>
+            <Reveal delay={0.06}><DemoCard tag="Text motion" label="Staggered reveal" desc="Words enter the frame in sequence — press replay any time."><TextRevealDemo /></DemoCard></Reveal>
+            <Reveal delay={0.12}><DemoCard tag="Scroll trigger" label="Animated counters" desc="Numbers spring to life when they scroll into view."><CounterDemo /></DemoCard></Reveal>
+            <Reveal delay={0.18}><DemoCard tag="Parallax" label="Multi-layer depth" desc="Layers move at different speeds, creating depth from a flat surface."><ParallaxDemo /></DemoCard></Reveal>
+          </div>
         </div>
       </section>
 
       {/* ── Process ── */}
-      <section className="py-24 md:py-32">
-        <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20">
-          <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }} transition={{ duration: 0.7 }}
-            className="mb-16 md:mb-20">
-            <p className="eyebrow mb-5">How it works</p>
-            <h2 className="font-display text-4xl md:text-5xl lg:text-[3.5rem] text-white mb-4 leading-[1.1]">
-              A clear path, start to finish.
+      <section className="py-[120px] max-md:py-[72px]">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-12">
+          <Reveal className="mb-14">
+            <h2 className="text-[#111] font-medium mb-4" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
+              How it works
             </h2>
-            <p className="text-lg md:text-xl max-w-xl" style={{ color: "#888" }}>
+            <p className="text-[#555] text-[17px] max-w-xl leading-relaxed">
               A clear process from first conversation to launch day — no surprises.
             </p>
-          </motion.div>
-
-          <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+          </Reveal>
+          <div style={{ borderTop: "1px solid #e8e8e8" }}>
             {processSteps.map((step, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.06, duration: 0.6 }}
-                className="group grid grid-cols-[3.5rem_1fr] md:grid-cols-[5rem_1fr_1.5fr] gap-6 md:gap-10 py-8 md:py-10 px-4 -mx-4 hover:bg-white/[0.02] transition-colors duration-200"
-                style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
-              >
-                <p className="font-display text-3xl md:text-5xl pt-1 transition-colors duration-300"
-                  style={{ color: "#c9a96e", opacity: 0.7 }}>
-                  {step.num}
-                </p>
-                <p className="font-display text-xl md:text-2xl text-white self-center">{step.title}</p>
-                <p className="text-base leading-relaxed col-start-2 md:col-start-auto" style={{ color: "#888" }}>{step.desc}</p>
-              </motion.div>
+              <Reveal key={i} delay={i * 0.05}>
+                <div
+                  className="grid grid-cols-[3rem_1fr] md:grid-cols-[4rem_1fr_1.5fr] gap-6 md:gap-10 py-8 md:py-9 hover:bg-[#fafafa] px-2 -mx-2 transition-colors duration-200 rounded-lg"
+                  style={{ borderBottom: "1px solid #e8e8e8" }}>
+                  <p className="text-xl md:text-2xl font-medium text-[#ccc] pt-0.5">{step.num}</p>
+                  <p className="text-[18px] md:text-xl font-semibold text-[#111] self-center">{step.title}</p>
+                  <p className="text-[#555] text-[17px] leading-relaxed col-start-2 md:col-start-auto">{step.desc}</p>
+                </div>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
       {/* ── Pricing ── */}
-      <section id="pricing" className="py-24 md:py-32" style={{ background: "#0f0f0f" }}>
-        <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20">
-          <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }} transition={{ duration: 0.7 }}
-            className="mb-16 md:mb-20">
-            <p className="eyebrow mb-5">Pricing</p>
-            <h2 className="font-display text-4xl md:text-5xl lg:text-[3.5rem] text-white mb-4 leading-[1.1]">
+      <section id="pricing" className="py-[120px] max-md:py-[72px]"
+        style={{ background: "#fafafa", borderTop: "1px solid #e8e8e8", borderBottom: "1px solid #e8e8e8" }}>
+        <div className="max-w-[1280px] mx-auto px-6 md:px-12">
+          <Reveal className="mb-14">
+            <h2 className="text-[#111] font-medium mb-4" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
               Simple, honest pricing.
             </h2>
-            <p className="text-lg md:text-xl max-w-xl" style={{ color: "#888" }}>
+            <p className="text-[#555] text-[17px] max-w-xl leading-relaxed">
               No retainers. No surprise invoices. Just straightforward hourly work.
             </p>
-          </motion.div>
-
+          </Reveal>
           <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start">
-            <motion.div initial={{ opacity: 0, y: 32 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }} transition={{ duration: 0.8 }}>
-              <div className="mb-10 flex items-baseline gap-2 flex-wrap">
-                <span className="font-display leading-none" style={{ fontSize: "clamp(4rem,10vw,7rem)", color: "#c9a96e" }}>$35</span>
-                <span className="font-display text-4xl md:text-5xl" style={{ color: "rgba(255,255,255,0.3)" }}> – $50</span>
-                <span className="text-xl ml-1" style={{ color: "#888" }}>/hr</span>
+            <Reveal>
+              <div className="mb-10">
+                <span className="font-semibold leading-none tracking-tight" style={{ fontSize: "clamp(4rem,10vw,7rem)", color: "#111" }}>$35</span>
+                <span className="font-medium text-4xl md:text-5xl text-[#bbb]"> – $50</span>
+                <span className="text-xl text-[#999] ml-2">/hr</span>
               </div>
-              <p className="text-lg mb-10 leading-relaxed" style={{ color: "#888" }}>
+              <p className="text-[#555] text-[17px] leading-relaxed mb-10 max-w-md">
                 Rate depends on project scope and complexity. Most projects are estimated upfront — you'll always know what you're paying before we start.
               </p>
               <button
                 onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-                className="btn-primary"
-                data-testid="button-get-quote"
-              >
-                Get a free quote <ArrowRight size={14} />
+                className="sqsp-btn-primary"
+                data-testid="button-get-quote">
+                Get a free quote
               </button>
-            </motion.div>
-
-            <motion.div initial={{ opacity: 0, y: 32 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.1 }}>
-              <p className="eyebrow mb-8">What's included</p>
-              <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <p className="text-[11px] font-medium text-[#999] uppercase tracking-widest mb-8">What's included</p>
+              <div style={{ borderTop: "1px solid #e8e8e8" }}>
                 {["Custom design & development", "Mobile-first responsive layouts", "SEO-optimized structure", "Security hardening", "Performance tuning", "Post-launch support"].map((item, i) => (
                   <div key={i} className="py-4 flex items-center justify-between group"
-                    style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-                    <span className="text-base text-white">{item}</span>
-                    <span className="text-sm opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: "#c9a96e" }}>Included</span>
+                    style={{ borderBottom: "1px solid #e8e8e8" }}>
+                    <span className="text-[17px] text-[#111]">{item}</span>
+                    <span className="text-[14px] text-[#999] opacity-0 group-hover:opacity-100 transition-opacity">Included ✓</span>
                   </div>
                 ))}
               </div>
-              <div className="mt-8 pt-8" style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-                <p className="text-sm" style={{ color: "#888" }}>
-                  No subscription lock-in. Your code, your server, your way. You own everything we build.
-                </p>
-              </div>
-            </motion.div>
+              <p className="text-[14px] text-[#999] mt-8">
+                No subscription lock-in. Your code, your server, your way. You own everything we build.
+              </p>
+            </Reveal>
           </div>
         </div>
       </section>
 
       {/* ── Featured project ── */}
-      <section className="py-24 md:py-32">
-        <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20">
+      <section className="py-[120px] max-md:py-[72px]">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-12">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            <motion.div initial={{ opacity: 0, y: 32 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }} transition={{ duration: 0.8 }}>
-              <p className="eyebrow mb-5">Featured project</p>
-              <h2 className="font-display text-4xl md:text-5xl lg:text-[3.5rem] text-white mb-6 leading-[1.1]">
+            <Reveal>
+              <p className="text-[11px] font-medium text-[#999] uppercase tracking-widest mb-5">Featured project</p>
+              <h2 className="text-[#111] font-medium mb-6" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
                 CSEL Cincinnati
               </h2>
-              <p className="text-lg md:text-xl leading-relaxed mb-10" style={{ color: "#888" }}>
+              <p className="text-[#555] text-[17px] leading-relaxed mb-10 max-w-md">
                 A complete platform for the Center for Social-Emotional Learning, serving schools across Greater Cincinnati with resource management, event calendars, and donation processing.
               </p>
-              <a
-                href="https://cselcincy.org"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-primary inline-flex"
-                data-testid="link-featured-project"
-              >
-                Visit live site <ExternalLink size={14} />
-              </a>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.96 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="overflow-hidden"
-              style={{ aspectRatio: "4/3", border: "1px solid rgba(255,255,255,0.08)" }}
-            >
-              <img
-                src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=1200&q=80"
-                alt="CSEL Cincinnati"
-                className="w-full h-full object-cover opacity-80"
-                loading="lazy"
-              />
-            </motion.div>
+              <div className="flex gap-4 flex-wrap">
+                <a href="https://cselcincy.org" target="_blank" rel="noopener noreferrer"
+                  className="sqsp-btn-primary" data-testid="link-featured-project">
+                  Visit live site <ExternalLink size={14} />
+                </a>
+                <button
+                  onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+                  className="sqsp-btn-ghost">
+                  Start your project
+                </button>
+              </div>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <div className="overflow-hidden rounded-2xl" style={{ aspectRatio: "4/3", boxShadow: "0 8px 40px rgba(0,0,0,0.10)" }}>
+                <img
+                  src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=1200&q=80"
+                  alt="CSEL Cincinnati"
+                  className="w-full h-full object-cover"
+                  loading="lazy" />
+              </div>
+            </Reveal>
           </div>
         </div>
       </section>
 
       {/* ── FAQ ── */}
-      <section className="py-24 md:py-32" style={{ background: "#0f0f0f" }}>
-        <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20">
-          <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }} transition={{ duration: 0.7 }}
-            className="mb-16">
-            <p className="eyebrow mb-5">FAQ</p>
-            <h2 className="font-display text-4xl md:text-5xl lg:text-[3.5rem] text-white leading-[1.1]">
+      <section style={{ background: "#fafafa", borderTop: "1px solid #e8e8e8", borderBottom: "1px solid #e8e8e8" }}
+        className="py-[120px] max-md:py-[72px]">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-12">
+          <Reveal className="mb-12">
+            <h2 className="text-[#111] font-medium" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
               Common questions.
             </h2>
-          </motion.div>
-
-          <div className="max-w-3xl" style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+          </Reveal>
+          <div className="max-w-2xl" style={{ borderTop: "1px solid #e8e8e8" }}>
             {faqs.map((faq, i) => (
-              <FAQItem
-                key={i}
-                q={faq.q}
-                a={faq.a}
-                isOpen={openFaq === i}
-                onToggle={() => setOpenFaq(openFaq === i ? null : i)}
-              />
+              <FAQItem key={i} q={faq.q} a={faq.a}
+                isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? null : i)} />
             ))}
           </div>
         </div>
       </section>
 
+      {/* ── Bottom CTA (Squarespace-style full-bleed "video" section) ── */}
+      <section className="relative overflow-hidden" style={{ minHeight: 600 }}>
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1920&q=80"
+            alt=""
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.52)" }} />
+        </div>
+        <div className="relative z-10 flex flex-col items-center justify-center min-h-[600px] text-center px-6 py-24">
+          <Reveal>
+            <h2 className="text-white font-medium mb-5" style={{ fontSize: "clamp(2rem,5vw,3.25rem)", letterSpacing: "-0.02em" }}>
+              Start your project today.
+            </h2>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <p className="text-white/75 text-[17px] leading-relaxed max-w-lg mb-10">
+              Tell us what you're building. We'll give you a free estimate and get back within 24 hours.
+            </p>
+          </Reveal>
+          <Reveal delay={0.2}>
+            <div className="flex flex-wrap gap-4 justify-center">
+              <button
+                onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+                className="sqsp-btn-white"
+                data-testid="button-cta-bottom">
+                Get started
+              </button>
+              <a href="https://cselcincy.org" target="_blank" rel="noopener noreferrer"
+                className="sqsp-btn-ghost !border-white/60 !text-white hover:!bg-white hover:!text-[#111]">
+                See our work
+              </a>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
       {/* ── Contact ── */}
-      <section id="contact" className="py-24 md:py-32">
-        <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20">
-          <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }} transition={{ duration: 0.7 }}
-            className="mb-16 md:mb-20">
-            <p className="eyebrow mb-5">Let's work together</p>
-            <h2 className="font-display text-4xl md:text-5xl lg:text-[3.5rem] text-white mb-4 leading-[1.1]">
+      <section id="contact" className="py-[120px] max-md:py-[72px]">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-12">
+          <Reveal className="mb-14">
+            <h2 className="text-[#111] font-medium mb-4" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
               Start a project.
             </h2>
-            <p className="text-lg md:text-xl max-w-xl" style={{ color: "#888" }}>
+            <p className="text-[#555] text-[17px] max-w-xl leading-relaxed">
               Tell us what you're building. We'll get back within 24 hours.
             </p>
-          </motion.div>
-
+          </Reveal>
           <div className="grid lg:grid-cols-2 gap-16 lg:gap-24">
-            <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+            <div style={{ borderTop: "1px solid #e8e8e8" }}>
               {[
                 { label: "Our work", value: "cselcincy.org", href: "https://cselcincy.org" },
                 { label: "Availability", value: "Taking new projects now" },
                 { label: "Rate", value: "$35–50 per hour" },
                 { label: "Response time", value: "Within 24 hours" },
               ].map((item, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 12 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.07 }}
-                  className="py-6 flex items-center justify-between gap-4"
-                  style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
-                >
-                  <p className="text-sm w-32 shrink-0" style={{ color: "#888" }}>{item.label}</p>
-                  {item.href ? (
-                    <a href={item.href} target="_blank" rel="noopener noreferrer"
-                      className="font-display text-xl text-white hover:text-[#c9a96e] transition-colors underline-offset-4 hover:underline">
-                      {item.value}
-                    </a>
-                  ) : (
-                    <p className="font-display text-xl text-white">{item.value}</p>
-                  )}
-                </motion.div>
+                <Reveal key={i} delay={i * 0.07}>
+                  <div className="py-5 flex items-center justify-between gap-4" style={{ borderBottom: "1px solid #e8e8e8" }}>
+                    <p className="text-[14px] text-[#999] w-32 shrink-0">{item.label}</p>
+                    {item.href ? (
+                      <a href={item.href} target="_blank" rel="noopener noreferrer"
+                        className="text-xl font-medium text-[#111] hover:opacity-60 transition-opacity underline-offset-4 hover:underline">
+                        {item.value}
+                      </a>
+                    ) : (
+                      <p className="text-xl font-medium text-[#111]">{item.value}</p>
+                    )}
+                  </div>
+                </Reveal>
               ))}
             </div>
-            <motion.div initial={{ opacity: 0, y: 32 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.1 }}>
+            <Reveal delay={0.1}>
               <ContactForm />
-            </motion.div>
+            </Reveal>
           </div>
         </div>
       </section>
 
       {/* ── Footer ── */}
-      <footer className="py-12 md:py-16" style={{ borderTop: "1px solid rgba(255,255,255,0.08)", background: "#0a0a0a" }}>
-        <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
-            <div>
-              <p className="font-display text-xl text-white">Vaulted Web Solutions</p>
-              <p className="text-sm mt-1" style={{ color: "#888" }}>Custom web development · Cincinnati, OH</p>
-            </div>
-            <p className="text-sm" style={{ color: "#888" }}>© {new Date().getFullYear()} Vaulted Web Solutions. All rights reserved.</p>
-            <div className="flex items-center gap-6">
+      <footer style={{ borderTop: "1px solid #e8e8e8", background: "#fff" }}>
+        <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-16">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-14">
+            {[
+              {
+                heading: "Services",
+                links: [
+                  { label: "Business Sites", id: "services" },
+                  { label: "E-Commerce", id: "services" },
+                  { label: "Non-Profits", id: "services" },
+                  { label: "Portfolios", id: "services" },
+                ],
+              },
+              {
+                heading: "Work",
+                links: [
+                  { label: "Our Portfolio", id: "work" },
+                  { label: "CSEL Cincinnati", url: "https://cselcincy.org" },
+                  { label: "Capabilities", id: "capabilities" },
+                ],
+              },
+              {
+                heading: "Company",
+                links: [
+                  { label: "Process", id: "capabilities" },
+                  { label: "Pricing", id: "pricing" },
+                  { label: "FAQ", id: "contact" },
+                ],
+              },
+              {
+                heading: "Start",
+                links: [
+                  { label: "Get a quote", id: "contact" },
+                  { label: "Contact us", id: "contact" },
+                ],
+              },
+            ].map((col, ci) => (
+              <div key={ci}>
+                <p className="text-[13px] font-semibold text-[#111] mb-4 uppercase tracking-widest">{col.heading}</p>
+                <div className="space-y-2.5">
+                  {col.links.map((link, li) => (
+                    <div key={li}>
+                      {"url" in link ? (
+                        <a href={link.url as string} target="_blank" rel="noopener noreferrer"
+                          className="text-[13px] text-[#555] hover:text-[#111] transition-colors block">
+                          {link.label}
+                        </a>
+                      ) : (
+                        <button
+                          onClick={() => document.getElementById(link.id as string)?.scrollIntoView({ behavior: "smooth" })}
+                          className="text-[13px] text-[#555] hover:text-[#111] transition-colors text-left">
+                          {link.label}
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8"
+            style={{ borderTop: "1px solid #e8e8e8" }}>
+            <p className="text-[12px] text-[#999]">© {new Date().getFullYear()} Vaulted Web Solutions. All rights reserved.</p>
+            <div className="flex gap-5">
               {["Twitter", "LinkedIn", "GitHub"].map(s => (
-                <motion.a
-                  key={s}
-                  href="#"
-                  className="text-sm transition-colors"
-                  style={{ color: "#888" }}
-                  whileHover={{ y: -2, color: "#c9a96e" } as any}
-                  data-testid={`link-social-${s.toLowerCase()}`}
-                >
-                  {s}
-                </motion.a>
+                <a key={s} href="#"
+                  className="text-[12px] text-[#999] hover:text-[#111] transition-colors"
+                  data-testid={`link-social-${s.toLowerCase()}`}>{s}</a>
               ))}
-              <motion.button
-                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                className="ml-4 p-2 transition-colors"
-                style={{ border: "1px solid rgba(255,255,255,0.12)", color: "#888" }}
-                whileHover={{ borderColor: "#c9a96e", color: "#c9a96e" } as any}
-                whileTap={{ scale: 0.9 }}
-                data-testid="button-back-to-top"
-              >
-                <ArrowUp size={16} />
-              </motion.button>
             </div>
           </div>
         </div>

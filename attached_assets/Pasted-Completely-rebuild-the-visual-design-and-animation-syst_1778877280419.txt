@@ -1,0 +1,195 @@
+Completely rebuild the visual design and animation system of my website to match squarespace.com's homepage as closely as possible. Do NOT change any of my existing text content or copy. Rewrite HTML structure, CSS, and JS from scratch if needed. Here is a precise breakdown of every effect on squarespace.com that I want reproduced:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 1 — OVERALL DESIGN LANGUAGE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Color: Pure white #ffffff background. Black #111111 text. No gradients, no dark mode. Clean, minimal, generous white space. This is a light-background premium site.
+
+Typography:
+- Import "Graphik" fallback stack: font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif (Squarespace uses a custom font, use this as the closest match)
+- Hero headline: 72px desktop / 40px mobile, font-weight 500, letter-spacing -0.02em, line-height 1.1, color #111
+- Section headings: 48px desktop / 28px mobile, font-weight 500
+- Body: 17px, line-height 1.65, color #555
+- Navigation links: 14px, font-weight 400, color #111
+
+Layout: Max-width 1280px centered container with 48px horizontal padding on desktop, 24px on mobile. Every section has 120px vertical padding on desktop, 72px on mobile.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 2 — NAVIGATION (exact Squarespace style)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+- Fixed top navbar, full width, starts with white background and a very subtle 1px bottom border (#e8e8e8)
+- Logo on far left, nav links centered, CTA button on far right
+- CTA button style: black background, white text, border-radius 100px (pill shape), padding 10px 24px, font-size 14px — on hover: background lightens to #333, smooth 0.2s transition
+- Nav links: 14px, no underline, color #111 — on hover: opacity drops to 0.6, 0.15s transition
+- On scroll past 10px: add box-shadow: 0 1px 12px rgba(0,0,0,0.08)
+- Mobile: hide all nav links, show a hamburger (≡) icon on right. On click: full-screen white overlay slides down from top (transform: translateY(-100%) → translateY(0), duration 0.4s ease), shows nav links stacked vertically in 32px font. Close (✕) button top right.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 3 — HERO: LOOPING VIDEO BACKGROUND + SLIDE CROSSFADE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+This is the most important section. Squarespace's hero has a FULL VIEWPORT looping video playing in the background (a lifestyle video of plants/nature) with a UI screenshot panel floating on the right side. Replicate this exactly:
+
+HERO STRUCTURE:
+- Full viewport height (100dvh) section
+- Left side: headline text + CTA (takes up ~50% width on desktop, full width on mobile)
+- Right side: a floating "website preview panel" card that shows a looping mp4/webm video of a website mockup (use a placeholder Unsplash video or a CSS animated mock if no video available)
+- Behind everything: a full-bleed background that cycles between 5 different visual "scenes"
+
+BACKGROUND SCENE CROSSFADE SYSTEM:
+Create 5 background layers stacked absolutely. Each layer is a <video> element set to:
+  autoplay loop muted playsinline
+Since we can't use Squarespace's actual videos, use high-quality Unsplash image URLs for each scene (plants, sports/basketball, music/piano, barbershop, ceramics — pick 5 fitting stock photos from Unsplash using their random API: https://source.unsplash.com/1600x900/?plants for example).
+
+Each scene div:
+  position: absolute; inset: 0; opacity: 0;
+  transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  background-size: cover; background-position: center;
+
+JavaScript: Every 4.5 seconds, fade out the current scene (opacity → 0) and fade in the next scene (opacity → 1). Cycle through all 5 scenes infinitely. Use a setInterval with index tracking.
+
+Add a dark overlay on top of the background: background: rgba(0,0,0,0.35) so the white text stays readable.
+
+HERO TEXT (left column):
+- Small eyebrow label in all-caps, 11px, letter-spacing 0.2em, white, opacity 0.7
+- Main headline in white, 72px desktop / 38px mobile, font-weight 500
+- Subtext: white, 17px, opacity 0.85, max-width 420px
+- CTA button: white background, black text, border-radius 100px, padding 14px 32px — on hover: background rgba(255,255,255,0.85)
+- Secondary link: white text, underline, 14px
+
+HERO TEXT ENTRY ANIMATION (on page load):
+Do NOT use simple fade-up. Squarespace uses a staggered reveal where each element slides up from 20px below AND fades in simultaneously. Implement exactly:
+1. Eyebrow label: opacity 0 → 1, translateY(20px) → 0, duration 0.6s, delay 0.1s
+2. Headline line 1: same, delay 0.25s
+3. Headline line 2 (if wraps): same, delay 0.38s
+4. Subtext: same, delay 0.52s
+5. CTA button: same, delay 0.68s
+Use animation-fill-mode: both on all. Easing: cubic-bezier(0.25, 0.46, 0.45, 0.94)
+
+HERO RIGHT PANEL (website mockup preview card):
+- A rounded card (border-radius 16px) with overflow hidden, box-shadow: 0 32px 80px rgba(0,0,0,0.35)
+- Inside it: a looping <video> or animated CSS mock of a website template
+- The card itself should gently float: add CSS animation — @keyframes float { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-12px)} } — applied with animation: float 6s ease-in-out infinite
+- On load, the card slides in from the right: translateX(60px) opacity 0 → normal, delay 0.4s, duration 0.9s
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 4 — ANIMATED SLOT-MACHINE COUNTING NUMBERS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Squarespace shows "14M+" "36B+" "200+" with a SLOT MACHINE digit scroll animation — each digit appears to roll upward through numbers like a casino counter. Implement this:
+
+HTML structure for each stat:
+<div class="stat-item">
+  <div class="stat-number">
+    <span class="digit-roller" data-target="14">0</span>
+    <span class="stat-suffix">M+</span>
+  </div>
+  <p class="stat-label">Projects Completed</p>
+</div>
+
+CSS for digit roller: overflow: hidden; display: inline-block;
+The inner span animates by cycling through digits 0-9 visually using translateY, then snapping to the final number.
+
+JavaScript implementation — when stat scrolls into view via IntersectionObserver:
+- Use requestAnimationFrame
+- Duration 2200ms, ease-out curve
+- Every ~80ms, show the next intermediate number
+- Final 400ms: show only the real target number, stop
+
+Full stat strip: full-width band, white background, 1px top and bottom border (#e8e8e8), 3–4 stats in a row, centered, generous padding.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 5 — HORIZONTAL PILL TAB SWITCHER (Services section)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Squarespace's "Grow your business" section has horizontal scrollable pill tabs (Services, Online Store, Invoicing, Scheduling, etc). Clicking a tab swaps the content panel with a crossfade. Replicate:
+
+- Tabs: border-radius 100px, border 1px solid #ddd, padding 8px 20px, font-size 14px, background white, cursor pointer
+- Active tab: background #111, color white, border-color #111
+- Inactive hover: background #f5f5f5
+- Tab row: display flex, gap 8px, overflow-x auto, scrollbar-width none (hide scrollbar)
+- Content panels: position relative, min-height 400px
+- Panel switch: fade outgoing panel (opacity → 0, 0.25s), then fade incoming (opacity → 1, 0.35s)
+- Each panel has: left side text description, right side an image/mockup card
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 6 — FEATURE CARD CAROUSEL (autoplay video cards)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Squarespace's "Everything you need" section uses a horizontal carousel of cards. Each card has:
+- White card with border-radius 20px, border 1px solid #eee
+- Card title and short description at top
+- An animated/video preview at the bottom of the card (they use mp4 autoplay loops)
+- On hover: box-shadow deepens from 0 2px 8px rgba(0,0,0,0.06) to 0 12px 40px rgba(0,0,0,0.12), transform: translateY(-4px), transition 0.3s ease
+- Cards are in a horizontally scrollable row on mobile, CSS Grid 3-col on desktop
+- Active/featured card (first one): slightly larger scale(1.02) with stronger shadow
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 7 — SCROLL REVEAL (Squarespace's exact style)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Squarespace does NOT use big dramatic slide-ups. Their scroll reveals are subtle and elegant:
+- translateY(16px) → translateY(0) — only 16px, not 40px
+- opacity 0 → 1
+- duration: 0.55s
+- easing: cubic-bezier(0.25, 0.46, 0.45, 0.94)
+- IntersectionObserver threshold: 0.1
+- Stagger children within each section: each child gets an additional delay of index × 0.08s
+- Once revealed, unobserve — do not re-animate on scroll back up
+
+Apply .sqsp-reveal class to: every h2, every p in sections, every card, every image.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 8 — BOTTOM CTA SECTION WITH LOOPING VIDEO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Squarespace ends with a full-width section that has a looping cinematic video playing behind centered text "Start your free website trial today". Replicate:
+
+- Full width, min-height 600px, position relative, overflow hidden
+- Background: <video> tag, autoplay loop muted playsinline, width 100% height 100%, object-fit cover, position absolute inset 0
+- Use a free stock video from a CDN or an Unsplash video URL as placeholder
+- Dark overlay on top: background rgba(0,0,0,0.5)
+- Centered white text on top: headline 52px + subtext + two CTA buttons (primary pill button white/black + secondary ghost button)
+- On scroll into view: headline fades up (same subtle 16px translateY reveal)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 9 — BUTTONS (exact Squarespace style)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Primary button:
+  background: #111; color: white; border: none;
+  border-radius: 100px; padding: 13px 28px;
+  font-size: 15px; font-weight: 500; cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+  On hover: background: #333; transform: translateY(-1px);
+
+Ghost/secondary button:
+  background: transparent; color: #111;
+  border: 1.5px solid #111; border-radius: 100px;
+  same padding and font. On hover: background: #111; color: white;
+  transition: all 0.2s ease;
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 10 — FOOTER (Squarespace style)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+- White background, 1px top border #e8e8e8
+- 5-column link grid (Products, Solutions, Resources, Company, Follow) on desktop
+- Collapses to 2-col on tablet, 1-col accordion on mobile
+- Bottom strip: copyright left, language selector right, all 12px #999
+- Footer links: 13px, color #555, no underline — hover: color #111, 0.2s
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 11 — SMOOTH SCROLL + PERFORMANCE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+- html { scroll-behavior: smooth; }
+- All images: loading="lazy", decoding="async"
+- All videos: autoplay muted loop playsinline preload="none"
+- CSS: will-change: transform on anything that animates
+- All JS in one DOMContentLoaded block, no jQuery, no libraries
+- CSS custom properties at top of stylesheet for all colors/spacing
+- @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+- Mobile breakpoint: 768px

@@ -1,75 +1,67 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&family=DM+Serif+Display:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --font-display: 'DM Serif Display', serif;
-  --font-body: 'DM Sans', sans-serif;
-  --font-sans: 'DM Sans', sans-serif;
+  --font-display: 'DM Sans', -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
 
-  /* Deep off-black dark theme */
-  --background: 0 0% 4%;
-  --foreground: 0 0% 100%;
+  /* Pure white Squarespace theme */
+  --background: 0 0% 100%;
+  --foreground: 0 0% 7%;
 
-  --card: 0 0% 7%;
-  --card-foreground: 0 0% 100%;
-  --card-border: 0 0% 13%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 7%;
+  --card-border: 0 0% 91%;
 
-  --popover: 0 0% 7%;
-  --popover-foreground: 0 0% 100%;
-  --popover-border: 0 0% 13%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 7%;
+  --popover-border: 0 0% 91%;
 
-  /* Gold as primary */
-  --primary: 36 51% 61%;
-  --primary-foreground: 0 0% 4%;
+  --primary: 0 0% 7%;
+  --primary-foreground: 0 0% 100%;
 
-  --secondary: 0 0% 9%;
-  --secondary-foreground: 0 0% 100%;
+  --secondary: 0 0% 96%;
+  --secondary-foreground: 0 0% 7%;
 
-  --muted: 0 0% 9%;
-  --muted-foreground: 0 0% 53%;
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 33%;
 
-  /* Gold accent */
-  --accent: 36 51% 61%;
-  --accent-foreground: 0 0% 4%;
+  --accent: 0 0% 96%;
+  --accent-foreground: 0 0% 7%;
 
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
 
-  --border: 0 0% 13%;
-  --input: 0 0% 13%;
-  --ring: 36 51% 61%;
+  --border: 0 0% 91%;
+  --input: 0 0% 91%;
+  --ring: 0 0% 7%;
 
-  --sidebar: 0 0% 7%;
-  --sidebar-foreground: 0 0% 100%;
-  --sidebar-border: 0 0% 13%;
-  --sidebar-primary: 36 51% 61%;
-  --sidebar-primary-foreground: 0 0% 4%;
-  --sidebar-accent: 0 0% 9%;
-  --sidebar-accent-foreground: 0 0% 100%;
-  --sidebar-ring: 36 51% 61%;
+  --sidebar: 0 0% 100%;
+  --sidebar-foreground: 0 0% 7%;
+  --sidebar-border: 0 0% 91%;
+  --sidebar-primary: 0 0% 7%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 0 0% 96%;
+  --sidebar-accent-foreground: 0 0% 7%;
+  --sidebar-ring: 0 0% 7%;
 
-  --chart-1: 36 51% 61%;
-  --chart-2: 36 40% 50%;
-  --chart-3: 36 30% 40%;
-  --chart-4: 36 20% 30%;
-  --chart-5: 36 10% 20%;
+  --chart-1: 0 0% 10%;
+  --chart-2: 0 0% 25%;
+  --chart-3: 0 0% 40%;
+  --chart-4: 0 0% 60%;
+  --chart-5: 0 0% 80%;
 
   --radius: 0px;
 
-  --button-outline: rgba(255,255,255,0.08);
-  --badge-outline: rgba(255,255,255,0.05);
-  --opaque-button-border-intensity: 8;
-  --elevate-1: rgba(255,255,255,0.03);
-  --elevate-2: rgba(255,255,255,0.07);
-
-  /* Named design tokens */
-  --gold: #c9a96e;
-  --dark-bg: #0a0a0a;
-  --glass-bg: rgba(255,255,255,0.03);
-  --glass-border: rgba(255,255,255,0.08);
+  --button-outline: rgba(0,0,0,0.08);
+  --badge-outline: rgba(0,0,0,0.05);
+  --opaque-button-border-intensity: -5;
+  --elevate-1: rgba(0,0,0,0.02);
+  --elevate-2: rgba(0,0,0,0.05);
 }
 
 @layer base {
@@ -85,26 +77,15 @@
     @apply bg-background text-foreground antialiased;
     font-family: var(--font-body);
     letter-spacing: -0.01em;
-    cursor: auto;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-    opacity: 0.03;
-    pointer-events: none;
-    z-index: 9990;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
-    @apply font-normal tracking-tight;
+    @apply font-medium tracking-tight;
   }
 
   ::selection {
-    background: rgba(201, 169, 110, 0.25);
+    @apply bg-foreground/10;
   }
 }
 
@@ -130,130 +111,106 @@
     display: none;
   }
 
-  /* Gold eyebrow label */
-  .eyebrow {
-    font-family: var(--font-body);
-    font-size: 11px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--gold);
-  }
-
-  /* DM Serif Display italic pull quote */
-  .italic-accent {
-    font-family: var(--font-display);
-    font-style: italic;
-  }
-
-  /* Glassmorphism card */
-  .glass-card {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(8px);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-  }
-
-  .glass-card:hover {
-    transform: translateY(-6px);
-    background: rgba(255,255,255,0.07);
-    box-shadow: 0 24px 64px rgba(0,0,0,0.4);
-  }
-
-  /* Sliding fill primary button */
-  .btn-primary {
-    position: relative;
-    overflow: hidden;
-    border: 1.5px solid var(--gold);
-    color: var(--gold);
-    background: transparent;
-    padding: 16px 40px;
-    border-radius: 0;
-    font-family: var(--font-body);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    font-size: 13px;
+  /* Squarespace primary pill button */
+  .sqsp-btn-primary {
+    background: #111;
+    color: #fff;
+    border: none;
+    border-radius: 100px;
+    padding: 13px 28px;
+    font-size: 15px;
+    font-weight: 500;
     cursor: pointer;
-    z-index: 0;
-    transition: color 0.3s ease;
+    transition: background 0.2s ease, transform 0.15s ease;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    font-family: var(--font-body);
   }
 
-  .btn-primary::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: var(--gold);
-    transition: left 0.35s ease;
-    z-index: -1;
+  .sqsp-btn-primary:hover {
+    background: #333;
+    transform: translateY(-1px);
   }
 
-  .btn-primary:hover::before {
-    left: 0;
+  /* Ghost/secondary button */
+  .sqsp-btn-ghost {
+    background: transparent;
+    color: #111;
+    border: 1.5px solid #111;
+    border-radius: 100px;
+    padding: 12px 26px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-body);
   }
 
-  .btn-primary:hover {
-    color: #0a0a0a;
+  .sqsp-btn-ghost:hover {
+    background: #111;
+    color: #fff;
   }
 
-  /* Scroll reveal */
-  .reveal {
+  /* White ghost button (for dark hero) */
+  .sqsp-btn-white {
+    background: #fff;
+    color: #111;
+    border: none;
+    border-radius: 100px;
+    padding: 14px 32px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-body);
+  }
+
+  .sqsp-btn-white:hover {
+    background: rgba(255,255,255,0.85);
+    transform: translateY(-1px);
+  }
+
+  /* Squarespace-style scroll reveal */
+  .sqsp-reveal {
     opacity: 0;
-    transform: translateY(40px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
+    transform: translateY(16px);
+    transition: opacity 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
-  .reveal.visible {
+  .sqsp-reveal.visible {
     opacity: 1;
     transform: translateY(0);
   }
 
-  /* Custom cursor */
-  #vaulted-cursor {
-    width: 24px;
-    height: 24px;
-    border: 2px solid var(--gold);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 99999;
-    transition: width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
-    mix-blend-mode: difference;
-    top: 0;
-    left: 0;
-    will-change: transform;
+  /* Feature card */
+  .feature-card {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 20px;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
   }
 
-  #vaulted-cursor.cursor-grow {
-    width: 48px;
-    height: 48px;
-    margin-left: -12px;
-    margin-top: -12px;
+  .feature-card:hover {
+    box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+    transform: translateY(-4px);
   }
+}
 
-  @media (max-width: 768px) {
-    #vaulted-cursor {
-      display: none;
-    }
+/* Floating card animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
 
-    body {
-      cursor: auto !important;
-    }
-  }
-
-  @media (min-width: 769px) {
-    body {
-      cursor: none;
-    }
-
-    a, button {
-      cursor: none;
-    }
-  }
+.floating-card {
+  animation: float 6s ease-in-out infinite;
 }
 
 /* Marquee animation */
@@ -270,16 +227,6 @@
 
 .marquee-track:hover {
   animation-play-state: paused;
-}
-
-/* Ken Burns */
-@keyframes ken-burns {
-  from { transform: scale(1); }
-  to { transform: scale(1.07); }
-}
-
-.ken-burns-active {
-  animation: ken-burns 14s ease-in-out infinite alternate;
 }
 
 /* Prefers reduced motion */

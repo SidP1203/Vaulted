@@ -28,75 +28,59 @@ export function ContactForm() {
   };
 
   return (
-    <div
-      className="p-8 md:p-10 lg:p-12"
-      style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.08)" }}
-    >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div>
-          <label className="block text-xs tracking-widest uppercase mb-2" style={{ color: "#888" }}>Name</label>
-          <Input
-            {...register("name")}
-            placeholder="Your name"
-            className="h-12 bg-transparent border-0 border-b rounded-none text-white placeholder:text-white/20 focus-visible:ring-0 focus-visible:border-b focus-visible:border-[#c9a96e] transition-colors px-0"
-            style={{ borderBottom: "1px solid rgba(255,255,255,0.12)" }}
-            data-testid="input-name"
-          />
-          {errors.name && (
-            <p className="text-sm mt-2" style={{ color: "#ef4444" }}>{errors.name.message}</p>
-          )}
-        </div>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+      <div>
+        <label className="block text-[13px] font-medium text-[#111] mb-1.5">Name</label>
+        <Input
+          {...register("name")}
+          placeholder="Your name"
+          className="h-11 border-[#ddd] bg-white rounded-lg text-[#111] placeholder:text-[#bbb] focus-visible:ring-1 focus-visible:ring-[#111] focus-visible:border-[#111] transition-colors"
+          data-testid="input-name"
+        />
+        {errors.name && (
+          <p className="text-sm text-red-500 mt-1.5">{errors.name.message}</p>
+        )}
+      </div>
 
-        <div>
-          <label className="block text-xs tracking-widest uppercase mb-2" style={{ color: "#888" }}>Email</label>
-          <Input
-            {...register("email")}
-            type="email"
-            placeholder="your@email.com"
-            className="h-12 bg-transparent border-0 border-b rounded-none text-white placeholder:text-white/20 focus-visible:ring-0 focus-visible:border-b focus-visible:border-[#c9a96e] transition-colors px-0"
-            style={{ borderBottom: "1px solid rgba(255,255,255,0.12)" }}
-            data-testid="input-email"
-          />
-          {errors.email && (
-            <p className="text-sm mt-2" style={{ color: "#ef4444" }}>{errors.email.message}</p>
-          )}
-        </div>
+      <div>
+        <label className="block text-[13px] font-medium text-[#111] mb-1.5">Email</label>
+        <Input
+          {...register("email")}
+          type="email"
+          placeholder="your@email.com"
+          className="h-11 border-[#ddd] bg-white rounded-lg text-[#111] placeholder:text-[#bbb] focus-visible:ring-1 focus-visible:ring-[#111] focus-visible:border-[#111] transition-colors"
+          data-testid="input-email"
+        />
+        {errors.email && (
+          <p className="text-sm text-red-500 mt-1.5">{errors.email.message}</p>
+        )}
+      </div>
 
-        <div>
-          <label className="block text-xs tracking-widest uppercase mb-2" style={{ color: "#888" }}>Message</label>
-          <Textarea
-            {...register("message")}
-            placeholder="Tell us about your project..."
-            className="bg-transparent border-0 border-b rounded-none text-white placeholder:text-white/20 focus-visible:ring-0 focus-visible:border-b focus-visible:border-[#c9a96e] resize-none transition-colors px-0 min-h-[140px]"
-            style={{ borderBottom: "1px solid rgba(255,255,255,0.12)" }}
-            data-testid="input-message"
-          />
-          {errors.message && (
-            <p className="text-sm mt-2" style={{ color: "#ef4444" }}>{errors.message.message}</p>
-          )}
-        </div>
+      <div>
+        <label className="block text-[13px] font-medium text-[#111] mb-1.5">Message</label>
+        <Textarea
+          {...register("message")}
+          placeholder="Tell us about your project..."
+          className="border-[#ddd] bg-white rounded-lg text-[#111] placeholder:text-[#bbb] focus-visible:ring-1 focus-visible:ring-[#111] focus-visible:border-[#111] resize-none transition-colors min-h-[140px]"
+          data-testid="input-message"
+        />
+        {errors.message && (
+          <p className="text-sm text-red-500 mt-1.5">{errors.message.message}</p>
+        )}
+      </div>
 
-        <div className="pt-2">
-          <button
-            type="submit"
-            disabled={isPending}
-            className="btn-primary w-full justify-center"
-            data-testid="button-submit"
-          >
-            {isPending ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Sending...
-              </>
-            ) : (
-              <>
-                Send message
-                <ArrowRight className="h-4 w-4" />
-              </>
-            )}
-          </button>
-        </div>
-      </form>
-    </div>
+      <button
+        type="submit"
+        disabled={isPending}
+        className="sqsp-btn-primary w-full justify-center !py-3"
+        data-testid="button-submit"
+      >
+        {isPending ? (
+          <><Loader2 className="h-4 w-4 animate-spin" /> Sending...</>
+        ) : (
+          <>Send message <ArrowRight className="h-4 w-4" /></>
+        )}
+      </button>
+    </form>
   );
 }
