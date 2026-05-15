@@ -3,11 +3,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useSendMessage } from "@/hooks/use-messages";
 import { insertMessageSchema } from "@shared/schema";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, ArrowRight } from "lucide-react";
-import { motion } from "framer-motion";
 
 const formSchema = insertMessageSchema;
 type FormData = z.infer<typeof formSchema>;
@@ -26,96 +24,78 @@ export function ContactForm() {
   });
 
   const onSubmit = (data: FormData) => {
-    sendMessage(data, {
-      onSuccess: () => reset(),
-    });
+    sendMessage(data, { onSuccess: () => reset() });
   };
 
   return (
-    <div className="border border-border p-8 md:p-10 lg:p-12">
+    <div
+      className="p-8 md:p-10 lg:p-12"
+      style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.08)" }}
+    >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.1 }}
-        >
-          <label className="block text-sm text-muted-foreground mb-2">Name</label>
+        <div>
+          <label className="block text-xs tracking-widest uppercase mb-2" style={{ color: "#888" }}>Name</label>
           <Input
             {...register("name")}
             placeholder="Your name"
-            className="h-12 border-border bg-transparent focus:border-foreground transition-colors rounded-none"
+            className="h-12 bg-transparent border-0 border-b rounded-none text-white placeholder:text-white/20 focus-visible:ring-0 focus-visible:border-b focus-visible:border-[#c9a96e] transition-colors px-0"
+            style={{ borderBottom: "1px solid rgba(255,255,255,0.12)" }}
             data-testid="input-name"
           />
           {errors.name && (
-            <p className="text-sm text-destructive mt-2">{errors.name.message}</p>
+            <p className="text-sm mt-2" style={{ color: "#ef4444" }}>{errors.name.message}</p>
           )}
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.15 }}
-        >
-          <label className="block text-sm text-muted-foreground mb-2">Email</label>
+        <div>
+          <label className="block text-xs tracking-widest uppercase mb-2" style={{ color: "#888" }}>Email</label>
           <Input
             {...register("email")}
             type="email"
             placeholder="your@email.com"
-            className="h-12 border-border bg-transparent focus:border-foreground transition-colors rounded-none"
+            className="h-12 bg-transparent border-0 border-b rounded-none text-white placeholder:text-white/20 focus-visible:ring-0 focus-visible:border-b focus-visible:border-[#c9a96e] transition-colors px-0"
+            style={{ borderBottom: "1px solid rgba(255,255,255,0.12)" }}
             data-testid="input-email"
           />
           {errors.email && (
-            <p className="text-sm text-destructive mt-2">{errors.email.message}</p>
+            <p className="text-sm mt-2" style={{ color: "#ef4444" }}>{errors.email.message}</p>
           )}
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2 }}
-        >
-          <label className="block text-sm text-muted-foreground mb-2">Message</label>
+        <div>
+          <label className="block text-xs tracking-widest uppercase mb-2" style={{ color: "#888" }}>Message</label>
           <Textarea
             {...register("message")}
             placeholder="Tell us about your project..."
-            className="min-h-[160px] border-border bg-transparent focus:border-foreground resize-none transition-colors rounded-none"
+            className="bg-transparent border-0 border-b rounded-none text-white placeholder:text-white/20 focus-visible:ring-0 focus-visible:border-b focus-visible:border-[#c9a96e] resize-none transition-colors px-0 min-h-[140px]"
+            style={{ borderBottom: "1px solid rgba(255,255,255,0.12)" }}
             data-testid="input-message"
           />
           {errors.message && (
-            <p className="text-sm text-destructive mt-2">{errors.message.message}</p>
+            <p className="text-sm mt-2" style={{ color: "#ef4444" }}>{errors.message.message}</p>
           )}
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.25 }}
-        >
-          <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
-            <Button
-              type="submit"
-              disabled={isPending}
-              className="w-full h-12 text-base bg-foreground text-background hover:bg-foreground/90 rounded-none"
-              data-testid="button-submit"
-            >
-              {isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Sending...
-                </>
-              ) : (
-                <>
-                  Send message
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </>
-              )}
-            </Button>
-          </motion.div>
-        </motion.div>
+        <div className="pt-2">
+          <button
+            type="submit"
+            disabled={isPending}
+            className="btn-primary w-full justify-center"
+            data-testid="button-submit"
+          >
+            {isPending ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Sending...
+              </>
+            ) : (
+              <>
+                Send message
+                <ArrowRight className="h-4 w-4" />
+              </>
+            )}
+          </button>
+        </div>
       </form>
     </div>
   );

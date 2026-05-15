@@ -1,0 +1,201 @@
+Redesign my entire website to look like a premium, award-winning web agency site inspired by Squarespace's own marketing website. Do NOT change any of my existing text content or copy — only restyle and add animations/sections. Apply every single instruction below.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎨 VISUAL STYLE & COLOR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Background: deep off-black #0a0a0a, white text, accent color #c9a96e (champagne gold)
+- Define all colors as CSS custom properties at the top of the stylesheet:
+  --bg: #0a0a0a; --text: #ffffff; --accent: #c9a96e; --muted: #888888; --border: rgba(255,255,255,0.08)
+- Add a subtle grain/noise texture overlay across the entire page using a CSS ::before pseudo-element on body with an SVG base64 noise pattern, opacity 0.03
+- Remove all generic drop shadows, clip art, and purple gradients
+- All section vertical padding: minimum 100px top and bottom on desktop, 60px on mobile
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔤 TYPOGRAPHY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Import from Google Fonts: "DM Serif Display" for headings, "DM Sans" for body
+- Hero headline: minimum 80px desktop, 40px mobile, line-height 1.05, letter-spacing -0.02em
+- Section headings: 52px desktop, 32px mobile
+- Body text: 18px, line-height 1.7, color var(--muted)
+- Eyebrow/label text style: font-size 11px, letter-spacing 0.25em, text-transform uppercase, color var(--accent), font-family DM Sans
+- Add a thin serif italic accent style class (.italic-accent) using DM Serif Display italic for pull quotes
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🏠 HERO SECTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Full viewport height (100vh), centered content, dark background
+- Add an eyebrow label above the headline (e.g. "CUSTOM WEB DEVELOPMENT")
+- Headline animates in word by word on page load: each word wrapped in a span, fade + slide up, staggered by 0.12s delay, using animation-fill-mode: both
+- Subheadline fades in at delay 0.7s, CTA button at delay 0.9s
+- Background has a very slow Ken Burns effect: scale(1.0) → scale(1.06) over 12s infinite alternate, apply to a background image or dark gradient layer
+- Below the hero headline, add a horizontal auto-scrolling marquee strip with content: "CUSTOM CODE · NO TEMPLATES · HAND-WRITTEN · FAST · SECURE · BUILT TO LAST · " — uppercase, accent color, letter-spacing 0.2em, thin top and bottom borders, pauses on hover
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📌 NAVIGATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Sticky top navbar, starts fully transparent
+- After scrolling 60px: transition to background rgba(10,10,10,0.85), backdrop-filter blur(20px), add 1px bottom border using var(--border)
+- Nav padding shrinks from 24px to 12px on scroll — smooth CSS transition 0.3s ease on all properties
+- On mobile (under 768px): hide nav links, show hamburger icon (3 lines)
+- Hamburger click: full-screen overlay slides in from right with nav links stacked vertically, large font, closes on X click or link click
+- Smooth scroll behavior: html { scroll-behavior: smooth; }
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📐 LAYOUT & SECTIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Stats bar: full-width dark strip with 3–4 large bold numbers (e.g. "50+ Projects · 100% Hand-Coded · 5★ Rated") — animate counting up from 0 when scrolled into view using requestAnimationFrame over 2s ease-out
+- Services section: CSS Grid, 3 columns desktop / 1 column mobile, cards with glassmorphism style (see card styles below)
+- Process section: numbered steps with oversized serif step numbers (01, 02, 03) in var(--accent), step title and description beside each
+- Portfolio/work section: asymmetric CSS Grid bento layout — mix of large and small cards with varied aspect ratios
+- Testimonials section: horizontal row of clean quote cards, client name and company below each
+- FAQ section: accordion with smooth height animation (see accordion spec below)
+- Footer: dark background, logo left, nav links center, social icons right, "Back to Top" arrow button bottom-right
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🃏 CARD STYLES (Services, Portfolio, Features)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+.card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+  padding: 40px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+.card:hover {
+  transform: translateY(-6px);
+  background: rgba(255,255,255,0.07);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔽 ACCORDION FAQ
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Click to expand/collapse — animate using max-height (NOT display:none):
+  Open: element.style.maxHeight = element.scrollHeight + 'px'
+  Close: element.style.maxHeight = '0'
+  CSS: transition: max-height 0.45s ease, opacity 0.3s ease;
+- Add a chevron icon that rotates 180deg when open: transition: transform 0.3s ease
+- Thin border between each FAQ item using var(--border)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔘 PILL TAB SWITCHER (Services or Features)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Row of clickable pill-shaped buttons above the services/features grid
+- Active pill: background var(--accent), color #000
+- Inactive pills: transparent background, border 1px solid var(--border), color var(--muted)
+- Clicking a pill shows that category's cards, hides others — fade transition opacity 0 → 1 over 0.3s
+- On mobile: pills row is horizontally scrollable, no visible scrollbar (scrollbar-width: none)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✨ BUTTON ANIMATIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+All primary buttons get a sliding fill hover effect:
+.btn-primary {
+  position: relative; overflow: hidden;
+  border: 1.5px solid var(--accent);
+  color: var(--accent); background: transparent;
+  padding: 16px 40px; border-radius: 4px;
+  font-family: 'DM Sans'; letter-spacing: 0.08em;
+  text-transform: uppercase; font-size: 13px;
+  cursor: pointer; z-index: 0;
+  transition: color 0.3s ease;
+}
+.btn-primary::before {
+  content: ''; position: absolute;
+  top: 0; left: -100%; width: 100%; height: 100%;
+  background: var(--accent); transition: left 0.35s ease; z-index: -1;
+}
+.btn-primary:hover::before { left: 0; }
+.btn-primary:hover { color: #0a0a0a; }
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌊 SCROLL REVEAL ANIMATIONS (All Sections)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Add .reveal class to every section heading, paragraph, card, and image below the fold:
+CSS:
+.reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+JavaScript (inside DOMContentLoaded):
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      entry.target.style.transitionDelay = (i % 4) * 0.1 + 's';
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 COUNT-UP NUMBER ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+For every stat number, add data-target="50" (the final number) and data-suffix="+" attributes.
+When the stat scrolls into view via IntersectionObserver, run:
+function countUp(el) {
+  const target = +el.dataset.target;
+  const suffix = el.dataset.suffix || '';
+  const duration = 2000;
+  const start = performance.now();
+  const update = (time) => {
+    const progress = Math.min((time - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.floor(ease * target) + suffix;
+    if (progress < 1) requestAnimationFrame(update);
+  };
+  requestAnimationFrame(update);
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🖱️ CUSTOM CURSOR (Desktop only, 769px+)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Add a div#cursor to the body. CSS:
+#cursor {
+  width: 24px; height: 24px;
+  border: 2px solid var(--accent);
+  border-radius: 50%; position: fixed;
+  pointer-events: none; z-index: 9999;
+  transition: transform 0.08s ease, width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
+  mix-blend-mode: difference;
+}
+JS: document.addEventListener('mousemove', e => {
+  cursor.style.transform = `translate(${e.clientX - 12}px, ${e.clientY - 12}px)`;
+});
+document.querySelectorAll('a, button').forEach(el => {
+  el.addEventListener('mouseenter', () => cursor.classList.add('cursor-grow'));
+  el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-grow'));
+});
+.cursor-grow { width: 48px !important; height: 48px !important; }
+On desktop only: body { cursor: none; } — wrap in @media (min-width: 769px)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📱 RESPONSIVE RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- All CSS Grid layouts collapse to 1 column below 768px
+- Hero headline 40px on mobile, section headings 28px
+- Cards: padding 24px on mobile
+- Hide custom cursor on mobile (cursor: auto on body below 769px, hide #cursor)
+- All images: loading="lazy", max-width: 100%, height: auto
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+♿ ACCESSIBILITY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Add this to the top of the CSS — disables all animation for users who prefer it:
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🗂️ CODE ORGANIZATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- All CSS in one external file (styles.css) with CSS variables at the very top
+- All JavaScript in one external file (main.js), everything inside one DOMContentLoaded listener
+- No jQuery — vanilla JS only
+- Add proper meta tags: <title>, meta description, og:title, og:description
+- Add smooth scroll: html { scroll-behavior: smooth; }
