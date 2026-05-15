@@ -9,7 +9,7 @@ import {
   useInView,
   AnimatePresence,
 } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { ArrowRight, ExternalLink, RotateCcw, ChevronDown } from "lucide-react";
 
 /* ─── Hero scenes ────────────────────────────────────────────────── */
@@ -396,6 +396,32 @@ function FAQItem({ q, a, isOpen, onToggle }: { q: string; a: string; isOpen: boo
   );
 }
 
+/* ─── Vertical auto-scroll image strip (Squarespace "Grow" style) ── */
+
+function VerticalScrollStrip({ images }: { images: string[] }) {
+  const triple = [...images, ...images, ...images];
+  return (
+    <div className="relative overflow-hidden rounded-2xl" style={{ height: 520 }}>
+      <motion.div
+        animate={{ y: ["0%", "-33.333%"] }}
+        transition={{ duration: 16, ease: "linear", repeat: Infinity, repeatType: "loop" }}
+        className="flex flex-col gap-3"
+      >
+        {triple.map((src, i) => (
+          <div key={i} className="shrink-0 rounded-xl overflow-hidden" style={{ height: 200 }}>
+            <img src={src} alt="" className="w-full h-full object-cover" loading="lazy" />
+          </div>
+        ))}
+      </motion.div>
+      {/* Fade top & bottom edges */}
+      <div className="absolute inset-x-0 top-0 h-20 pointer-events-none z-10"
+        style={{ background: "linear-gradient(to bottom, #fff 0%, transparent 100%)" }} />
+      <div className="absolute inset-x-0 bottom-0 h-20 pointer-events-none z-10"
+        style={{ background: "linear-gradient(to top, #fff 0%, transparent 100%)" }} />
+    </div>
+  );
+}
+
 /* ─── Reveal wrapper ─────────────────────────────────────────────── */
 
 function Reveal({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
@@ -418,6 +444,8 @@ export default function Home() {
   const [scene, setScene] = useState(0);
   const [activeTab, setActiveTab] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [hoveredPortfolio, setHoveredPortfolio] = useState<number | null>(null);
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -533,10 +561,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Services (pill tab switcher) ── */}
-      <section id="services" className="py-[120px] md:py-[120px] max-md:py-[72px]">
+      {/* ── Services — Squarespace "Grow your business" layout ── */}
+      <section id="services" className="py-[120px] max-md:py-[72px] overflow-hidden">
         <div className="max-w-[1280px] mx-auto px-6 md:px-12">
-          <Reveal className="mb-10">
+
+          {/* Section header */}
+          <Reveal className="mb-12">
             <h2 className="text-[#111] font-medium mb-4" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
               You deserve a website that works.
             </h2>
@@ -545,64 +575,70 @@ export default function Home() {
             </p>
           </Reveal>
 
-          {/* Pill tabs */}
-          <div className="overflow-x-auto scrollbar-hide mb-10">
-            <div className="flex gap-2 pb-2 w-max">
-              {serviceTabs.map((tab, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActiveTab(i)}
-                  className="px-5 py-2 text-[14px] rounded-full border transition-all duration-200 whitespace-nowrap"
-                  style={activeTab === i
-                    ? { background: "#111", color: "#fff", border: "1px solid #111" }
-                    : { background: "#fff", color: "#555", border: "1px solid #ddd" }
-                  }
-                  data-testid={`tab-service-${i}`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-          </div>
+          {/* Two-column: scrolling images LEFT, tabs + content RIGHT */}
+          <div className="flex flex-col-reverse md:flex-row gap-10 md:gap-16 items-start">
 
-          {/* Content panels */}
-          <div className="relative min-h-[340px]">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTab}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="grid md:grid-cols-2 gap-12 items-center"
-              >
-                <div>
-                  <p className="text-[11px] font-medium text-[#999] tracking-widest uppercase mb-4">
-                    {serviceTabs[activeTab].label}
-                  </p>
-                  <h3 className="text-[#111] font-medium mb-4" style={{ fontSize: "clamp(1.5rem,3vw,2rem)", letterSpacing: "-0.02em" }}>
-                    {serviceTabs[activeTab].heading}
-                  </h3>
-                  <p className="text-[#555] text-[17px] leading-relaxed mb-6">{serviceTabs[activeTab].desc}</p>
-                  <p className="text-[14px] text-[#999] mb-8">Great for: {serviceTabs[activeTab].tags}</p>
-                  <button
-                    onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-                    className="sqsp-btn-primary"
-                    data-testid={`service-cta-${activeTab}`}
+            {/* Left — continuous vertical scroll strip */}
+            <div className="w-full md:w-[42%] shrink-0">
+              <VerticalScrollStrip images={serviceTabs.map(t => t.img)} />
+            </div>
+
+            {/* Right — pill tabs + sliding content */}
+            <div className="flex-1 md:pt-4">
+              {/* Pill tabs */}
+              <div className="overflow-x-auto scrollbar-hide mb-10">
+                <div className="flex gap-2 w-max">
+                  {serviceTabs.map((tab, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setActiveTab(i)}
+                      className="px-5 py-2 text-[14px] rounded-full border transition-all duration-200 whitespace-nowrap"
+                      style={activeTab === i
+                        ? { background: "#111", color: "#fff", border: "1px solid #111" }
+                        : { background: "#fff", color: "#555", border: "1px solid #ddd" }
+                      }
+                      data-testid={`tab-service-${i}`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Sliding content panel — new enters from below, old exits upward */}
+              <div className="relative overflow-hidden min-h-[340px]">
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.div
+                    key={activeTab}
+                    initial={{ opacity: 0, y: 36 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -28 }}
+                    transition={{ duration: 0.42, ease: [0.25, 0.46, 0.45, 0.94] }}
                   >
-                    Start this project
-                  </button>
-                </div>
-                <div className="overflow-hidden rounded-2xl" style={{ boxShadow: "0 8px 40px rgba(0,0,0,0.10)" }}>
-                  <img
-                    src={serviceTabs[activeTab].img}
-                    alt={serviceTabs[activeTab].heading}
-                    className="w-full h-[320px] object-cover"
-                    loading="lazy"
-                  />
-                </div>
-              </motion.div>
-            </AnimatePresence>
+                    <p className="text-[11px] font-medium text-[#999] tracking-widest uppercase mb-5">
+                      {serviceTabs[activeTab].label}
+                    </p>
+                    <h3 className="text-[#111] font-medium mb-5" style={{ fontSize: "clamp(1.5rem,3vw,2.1rem)", letterSpacing: "-0.02em" }}>
+                      {serviceTabs[activeTab].heading}
+                    </h3>
+                    <p className="text-[#555] text-[17px] leading-relaxed mb-5">
+                      {serviceTabs[activeTab].desc}
+                    </p>
+                    <p className="text-[14px] text-[#999] mb-9">
+                      Great for: {serviceTabs[activeTab].tags}
+                    </p>
+                    <button
+                      onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+                      className="sqsp-btn-primary"
+                      data-testid={`service-cta-${activeTab}`}
+                    >
+                      Start this project
+                    </button>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
@@ -638,7 +674,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Portfolio ── */}
+      {/* ── Portfolio — interactive mouse-tracking ── */}
       <section id="work" className="py-[120px] max-md:py-[72px]">
         <div className="max-w-[1280px] mx-auto px-6 md:px-12">
           <Reveal className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
@@ -654,28 +690,100 @@ export default function Home() {
               See our featured project <ArrowRight className="w-4 h-4" />
             </a>
           </Reveal>
-          <motion.div
-            initial="hidden" whileInView="visible" viewport={{ once: true }}
-            variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.06 } } }}
-            className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {portfolioSites.map((site, i) => (
-              <motion.div key={i}
-                variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }}
-                className="group relative overflow-hidden cursor-pointer rounded-xl aspect-[4/3]"
-                onClick={() => site.url !== "#" && window.open(site.url, "_blank")}
-                data-testid={`portfolio-item-${i}`}>
-                <img src={site.img} alt={site.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  loading="lazy" />
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  style={{ background: "rgba(0,0,0,0.5)" }} />
-                <div className="absolute inset-0 flex flex-col justify-end p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <p className="text-white font-semibold leading-tight">{site.title}</p>
-                  <p className="text-white/70 text-xs mt-0.5">{site.tag}</p>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
+
+          {/* Grid with mouse-tracking floating preview */}
+          <div
+            className="relative"
+            onMouseMove={(e) => setCursorPos({ x: e.clientX, y: e.clientY })}
+            onMouseLeave={() => setHoveredPortfolio(null)}
+          >
+            {/* Floating cursor preview card — follows mouse, shows hovered site */}
+            <AnimatePresence>
+              {hoveredPortfolio !== null && (
+                <motion.div
+                  key={hoveredPortfolio}
+                  initial={{ opacity: 0, scale: 0.88, y: 8 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.88, y: 8 }}
+                  transition={{ duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  className="fixed pointer-events-none z-50 overflow-hidden rounded-2xl"
+                  style={{
+                    left: cursorPos.x + 28,
+                    top: cursorPos.y - 110,
+                    width: 290,
+                    height: 190,
+                    boxShadow: "0 20px 60px rgba(0,0,0,0.22)",
+                  }}
+                >
+                  <img
+                    src={portfolioSites[hoveredPortfolio].img}
+                    alt={portfolioSites[hoveredPortfolio].title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 flex flex-col justify-end p-4"
+                    style={{ background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 55%)" }}>
+                    <p className="text-white text-[15px] font-semibold leading-tight">
+                      {portfolioSites[hoveredPortfolio].title}
+                    </p>
+                    <p className="text-white/65 text-xs mt-0.5">
+                      {portfolioSites[hoveredPortfolio].tag}
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Portfolio grid */}
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={{ once: true }}
+              variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.06 } } }}
+              className="grid grid-cols-2 md:grid-cols-3 gap-4"
+            >
+              {portfolioSites.map((site, i) => (
+                <motion.div
+                  key={i}
+                  variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }}
+                  className="relative overflow-hidden cursor-none rounded-xl aspect-[4/3]"
+                  onMouseEnter={() => setHoveredPortfolio(i)}
+                  onMouseLeave={() => setHoveredPortfolio(null)}
+                  onClick={() => site.url !== "#" && window.open(site.url, "_blank")}
+                  data-testid={`portfolio-item-${i}`}
+                  style={{
+                    transition: "box-shadow 0.3s ease",
+                    boxShadow: hoveredPortfolio === i ? "0 8px 32px rgba(0,0,0,0.18)" : "0 2px 8px rgba(0,0,0,0.06)",
+                  }}
+                >
+                  {/* Image with parallax nudge toward cursor */}
+                  <motion.img
+                    src={site.img}
+                    alt={site.title}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    animate={hoveredPortfolio === i ? { scale: 1.07 } : { scale: 1 }}
+                    transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  />
+
+                  {/* Subtle label always visible at bottom */}
+                  <div className="absolute inset-x-0 bottom-0 p-4"
+                    style={{ background: "linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 80%)" }}>
+                    <p className="text-white text-sm font-semibold">{site.title}</p>
+                    <p className="text-white/60 text-xs">{site.tag}</p>
+                  </div>
+
+                  {/* Active ring */}
+                  {hoveredPortfolio === i && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="absolute inset-0 pointer-events-none"
+                      style={{ border: "2px solid rgba(255,255,255,0.4)" }}
+                    />
+                  )}
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
         </div>
       </section>
 
