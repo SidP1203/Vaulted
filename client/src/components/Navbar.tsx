@@ -3,10 +3,10 @@ import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navItems = [
-  { label: "Services", id: "services" },
-  { label: "Work", id: "work" },
+  { label: "Services",     id: "services"     },
+  { label: "Work",         id: "work"         },
   { label: "Capabilities", id: "capabilities" },
-  { label: "Pricing", id: "pricing" },
+  { label: "Pricing",      id: "pricing"      },
 ];
 
 export function Navbar() {
@@ -30,10 +30,11 @@ export function Navbar() {
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-        className="fixed top-0 left-0 right-0 z-50 bg-white transition-shadow duration-300"
+        className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
         style={{
-          borderBottom: "1px solid #e8e8e8",
-          boxShadow: isScrolled ? "0 1px 12px rgba(0,0,0,0.08)" : "none",
+          background: isScrolled ? "rgba(10,10,10,0.92)" : "transparent",
+          borderBottom: isScrolled ? "1px solid rgba(255,255,255,0.08)" : "1px solid transparent",
+          backdropFilter: isScrolled ? "blur(16px)" : "none",
         }}
       >
         <div className="max-w-[1280px] mx-auto px-6 md:px-12">
@@ -42,7 +43,7 @@ export function Navbar() {
             {/* Logo */}
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="text-lg font-semibold text-[#111] tracking-tight"
+              className="text-lg font-semibold text-white tracking-tight"
               data-testid="button-logo"
             >
               Vaulted
@@ -54,7 +55,7 @@ export function Navbar() {
                 <button
                   key={item.id}
                   onClick={() => scrollToSection(item.id)}
-                  className="text-[14px] text-[#111] hover:opacity-60 transition-opacity duration-150"
+                  className="text-[14px] text-white/70 hover:text-white transition-colors duration-150"
                   data-testid={`nav-${item.id}`}
                 >
                   {item.label}
@@ -65,7 +66,7 @@ export function Navbar() {
             {/* CTA */}
             <button
               onClick={() => scrollToSection("contact")}
-              className="hidden lg:flex sqsp-btn-primary !py-[10px] !px-6 !text-[14px]"
+              className="hidden lg:flex items-center gap-2 px-6 py-[10px] text-[14px] font-medium bg-white text-black rounded-full hover:bg-white/90 transition-all"
               data-testid="nav-contact"
             >
               Get started
@@ -73,7 +74,7 @@ export function Navbar() {
 
             {/* Mobile toggle */}
             <button
-              className="lg:hidden p-2 -mr-2 text-[#111]"
+              className="lg:hidden p-2 -mr-2 text-white"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               data-testid="button-mobile-menu"
             >
@@ -83,7 +84,7 @@ export function Navbar() {
         </div>
       </motion.nav>
 
-      {/* Full-screen mobile overlay — slides down from top */}
+      {/* Full-screen mobile overlay */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
@@ -91,11 +92,13 @@ export function Navbar() {
             animate={{ y: 0 }}
             exit={{ y: "-100%" }}
             transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="fixed inset-0 bg-white z-40 lg:hidden flex flex-col"
+            className="fixed inset-0 z-40 lg:hidden flex flex-col"
+            style={{ background: "#0a0a0a" }}
           >
-            <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: "1px solid #e8e8e8" }}>
-              <span className="text-lg font-semibold text-[#111]">Vaulted</span>
-              <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-[#111]">
+            <div className="flex items-center justify-between px-6 py-4"
+              style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+              <span className="text-lg font-semibold text-white">Vaulted</span>
+              <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-white">
                 <X size={22} />
               </button>
             </div>
@@ -107,8 +110,8 @@ export function Navbar() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.06, duration: 0.35 }}
                   onClick={() => scrollToSection(item.id)}
-                  className="text-left text-[32px] font-medium text-[#111] py-3 hover:opacity-50 transition-opacity"
-                  style={{ borderBottom: "1px solid #f0f0f0" }}
+                  className="text-left text-[32px] font-medium text-white py-3 hover:text-white/50 transition-colors"
+                  style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
                 >
                   {item.label}
                 </motion.button>

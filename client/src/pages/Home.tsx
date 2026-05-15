@@ -2,17 +2,16 @@ import { Navbar } from "@/components/Navbar";
 import { ContactForm } from "@/components/ContactForm";
 import {
   motion,
-  useScroll,
-  useTransform,
   useMotionValue,
   useSpring,
+  useTransform,
   useInView,
   AnimatePresence,
 } from "framer-motion";
 import { useRef, useState, useEffect, useCallback } from "react";
-import { ArrowRight, ExternalLink, RotateCcw, ChevronDown } from "lucide-react";
+import { ArrowRight, ExternalLink, RotateCcw } from "lucide-react";
 
-/* ─── Hero scenes ────────────────────────────────────────────────── */
+/* ─── Hero / contact cycling scenes ────────────────────────────── */
 
 const heroScenes = [
   "https://images.unsplash.com/photo-1512428813834-c702c7702b78?auto=format&fit=crop&w=1920&q=80",
@@ -22,7 +21,7 @@ const heroScenes = [
   "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=1920&q=80",
 ];
 
-/* ─── Service tabs data ──────────────────────────────────────────── */
+/* ─── Service tabs ──────────────────────────────────────────────── */
 
 const serviceTabs = [
   {
@@ -30,99 +29,64 @@ const serviceTabs = [
     heading: "Launch a professional website",
     desc: "Establish trust and generate leads with a site built to represent your brand at its best. No templates — hand-coded from scratch.",
     tags: "Agencies · Consultants · Retailers",
-    img: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=900&q=80",
+    img: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=1400&q=80",
   },
   {
     label: "E-Commerce",
     heading: "Sell online with confidence",
     desc: "Custom storefronts with clean checkout flows, payment integrations, and inventory management. Built to convert.",
     tags: "Artisans · Retailers · Limited Releases",
-    img: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=900&q=80",
+    img: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=1400&q=80",
   },
   {
     label: "Non-Profits",
     heading: "Amplify your mission",
     desc: "Donation processing, event management, and resource systems — built for organizations like CSEL Cincinnati.",
     tags: "Non-profits · Advocacy Groups · Foundations",
-    img: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=900&q=80",
+    img: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1400&q=80",
   },
   {
     label: "Portfolios",
     heading: "Show your work beautifully",
     desc: "Image-forward layouts that put your projects first. Case studies, galleries, and booking built in.",
     tags: "Designers · Photographers · Architects",
-    img: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=900&q=80",
+    img: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=1400&q=80",
   },
 ];
 
-/* ─── Feature cards ──────────────────────────────────────────────── */
-
-const featureCards = [
-  {
-    title: "Hand-written code",
-    desc: "Every line crafted by a human. No page builders, no template bloat — just clean, purposeful code.",
-    preview: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    title: "Security hardening",
-    desc: "No vulnerable plugins. No generic attack vectors. Built to resist threats from the ground up.",
-    preview: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    title: "Performance tuned",
-    desc: "Optimized for Core Web Vitals. Fast on every device, every connection, every time.",
-    preview: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    title: "Analytics-ready",
-    desc: "Proper metadata, sitemaps, and structured data. Built for both search engines and real people.",
-    preview: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    title: "Ongoing support",
-    desc: "We don't vanish after launch. Monthly updates, content changes, and feature additions as you grow.",
-    preview: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    title: "You own it",
-    desc: "Your code is yours. No subscription lock-in. Host it anywhere, with anyone, forever.",
-    preview: "https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?auto=format&fit=crop&w=600&q=80",
-  },
-];
-
-/* ─── Portfolio mosaic ───────────────────────────────────────────── */
+/* ─── Portfolio sites ───────────────────────────────────────────── */
 
 const portfolioSites = [
-  { title: "CSEL Cincinnati", tag: "Non-profit", url: "https://cselcincy.org", img: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80" },
-  { title: "E-Commerce Platform", tag: "Online Store", url: "#", img: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=800&q=80" },
-  { title: "Corporate Dashboard", tag: "SaaS", url: "#", img: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80" },
-  { title: "Creative Portfolio", tag: "Portfolio", url: "#", img: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=800&q=80" },
-  { title: "Local Business", tag: "Business", url: "#", img: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=800&q=80" },
-  { title: "Restaurant & Events", tag: "Hospitality", url: "#", img: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=800&q=80" },
+  { title: "CSEL Cincinnati",     tag: "Non-profit",   url: "https://cselcincy.org", img: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80" },
+  { title: "E-Commerce Platform", tag: "Online Store",  url: "#",                    img: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=800&q=80" },
+  { title: "Corporate Dashboard", tag: "SaaS",          url: "#",                    img: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80" },
+  { title: "Creative Portfolio",  tag: "Portfolio",     url: "#",                    img: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=800&q=80" },
+  { title: "Local Business",      tag: "Business",      url: "#",                    img: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=800&q=80" },
+  { title: "Restaurant & Events", tag: "Hospitality",   url: "#",                    img: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=800&q=80" },
 ];
 
-/* ─── Process steps ──────────────────────────────────────────────── */
+/* ─── Process steps ─────────────────────────────────────────────── */
 
 const processSteps = [
-  { num: "01", title: "Discovery call", desc: "We talk through your goals, timeline, and constraints. No assumptions made, no sales pitch given." },
-  { num: "02", title: "Design direction", desc: "Wireframes and visual concepts before a single line of code is written. You approve before we build." },
-  { num: "03", title: "Development", desc: "Hand-written, documented code in modern frameworks. Clean architecture from day one." },
-  { num: "04", title: "QA & security review", desc: "Full cross-browser testing, performance audits, and a security hardening pass before launch." },
-  { num: "05", title: "Launch", desc: "Zero-downtime deployment. We handle domains, DNS, hosting configuration, and go-live." },
-  { num: "06", title: "Support & growth", desc: "Monthly updates, content changes, and new features as your business evolves." },
+  { num: "01", title: "Discovery call",      desc: "We talk through your goals, timeline, and constraints. No assumptions made, no sales pitch given." },
+  { num: "02", title: "Design direction",    desc: "Wireframes and visual concepts before a single line of code is written. You approve before we build." },
+  { num: "03", title: "Development",         desc: "Hand-written, documented code in modern frameworks. Clean architecture from day one." },
+  { num: "04", title: "QA & security review",desc: "Full cross-browser testing, performance audits, and a security hardening pass before launch." },
+  { num: "05", title: "Launch",              desc: "Zero-downtime deployment. We handle domains, DNS, hosting configuration, and go-live." },
+  { num: "06", title: "Support & growth",    desc: "Monthly updates, content changes, and new features as your business evolves." },
 ];
 
-/* ─── FAQ ────────────────────────────────────────────────────────── */
+/* ─── FAQs ──────────────────────────────────────────────────────── */
 
 const faqs = [
-  { q: "How long does a typical project take?", a: "Most projects run 2–6 weeks depending on scope. A simple business site can be live in two weeks. Larger platforms with custom features take longer. We'll give you a realistic timeline during our discovery call — no inflated estimates to manage expectations later." },
-  { q: "Do I need to provide my own designs?", a: "No. We handle everything from visual direction to final code. If you have brand assets, logos, or inspiration, we'll incorporate them. If you're starting from scratch, we'll develop a direction together before writing a single line of code." },
-  { q: "Can you work with my existing domain or hosting provider?", a: "Yes — we deploy to any provider you prefer. AWS, DigitalOcean, Vercel, Netlify, your current host. We handle DNS configuration and zero-downtime launches. You're never locked into our infrastructure." },
-  { q: "What do I actually own after the project is done?", a: "Everything. The code, the design files, the domain, the data. There's no ongoing license fee to keep your site running. If you ever want to work with a different developer, you can hand them the full codebase." },
-  { q: "Is there a minimum project size or budget?", a: "No minimums. We bill hourly at $35–$50/hr and will always give you an upfront estimate. Small jobs are just as welcome as large ones — and many of our longest client relationships started with a single small fix." },
+  { q: "How long does a typical project take?",              a: "Most projects run 2–6 weeks depending on scope. A simple business site can be live in two weeks. Larger platforms with custom features take longer. We'll give you a realistic timeline during our discovery call — no inflated estimates to manage expectations later." },
+  { q: "Do I need to provide my own designs?",               a: "No. We handle everything from visual direction to final code. If you have brand assets, logos, or inspiration, we'll incorporate them. If you're starting from scratch, we'll develop a direction together before writing a single line of code." },
+  { q: "Can you work with my existing domain or hosting?",   a: "Yes — we deploy to any provider you prefer. AWS, DigitalOcean, Vercel, Netlify, your current host. We handle DNS configuration and zero-downtime launches. You're never locked into our infrastructure." },
+  { q: "What do I actually own after the project?",          a: "Everything. The code, the design files, the domain, the data. There's no ongoing license fee to keep your site running. If you ever want to work with a different developer, you can hand them the full codebase." },
+  { q: "Is there a minimum project size or budget?",         a: "No minimums. We bill hourly at $35–$50/hr and will always give you an upfront estimate. Small jobs are just as welcome as large ones — and many of our longest client relationships started with a single small fix." },
 ];
 
-/* ─── Slot machine stat ──────────────────────────────────────────── */
+/* ─── Slot machine stat ─────────────────────────────────────────── */
 
 function SlotStat({ target, suffix, label }: { target: number; suffix: string; label: string }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -133,36 +97,27 @@ function SlotStat({ target, suffix, label }: { target: number; suffix: string; l
   useEffect(() => {
     if (!inView || triggered.current) return;
     triggered.current = true;
-    const duration = 2200;
-    const settleAt = duration - 400;
+    const settleAt = 1800;
     const startTime = Date.now();
-
     const tick = setInterval(() => {
       const elapsed = Date.now() - startTime;
-      if (elapsed >= settleAt) {
-        setDisplay(target);
-        clearInterval(tick);
-        return;
-      }
+      if (elapsed >= settleAt) { setDisplay(target); clearInterval(tick); return; }
       const progress = elapsed / settleAt;
-      const maxVal = Math.max(target * 2, target + 20);
-      const decay = 1 - progress;
-      setDisplay(Math.floor(target * progress + Math.random() * target * decay * 0.5));
+      setDisplay(Math.floor(target * progress + Math.random() * target * (1 - progress) * 0.4));
     }, 80);
-
     return () => clearInterval(tick);
   }, [inView, target]);
 
   return (
     <div ref={ref} className="text-center px-8">
-      <div className="text-5xl md:text-6xl font-semibold text-[#111] tabular-nums leading-none tracking-tight">
+      <div className="text-5xl md:text-6xl font-semibold text-white tabular-nums leading-none tracking-tight">
         {display}{suffix}
       </div>
     </div>
   );
 }
 
-/* ─── Hero mockup card ───────────────────────────────────────────── */
+/* ─── Hero mockup card ──────────────────────────────────────────── */
 
 function MockupCard() {
   return (
@@ -171,15 +126,15 @@ function MockupCard() {
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: 0.4, duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
       className="floating-card rounded-2xl overflow-hidden w-full max-w-[460px]"
-      style={{ boxShadow: "0 32px 80px rgba(0,0,0,0.35)" }}
+      style={{ boxShadow: "0 32px 80px rgba(0,0,0,0.55)" }}
     >
-      <div className="bg-[#f0f0f0] px-4 py-3 flex items-center gap-3">
+      <div className="bg-[#1a1a1a] px-4 py-3 flex items-center gap-3">
         <div className="flex gap-1.5">
           <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]" />
           <div className="w-2.5 h-2.5 rounded-full bg-[#febc2e]" />
           <div className="w-2.5 h-2.5 rounded-full bg-[#28c840]" />
         </div>
-        <div className="flex-1 bg-white rounded px-3 py-1 text-[11px] text-[#999] truncate">cselcincy.org</div>
+        <div className="flex-1 bg-white/10 rounded px-3 py-1 text-[11px] text-white/50 truncate">cselcincy.org</div>
       </div>
       <img
         src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=800&q=80"
@@ -191,42 +146,37 @@ function MockupCard() {
   );
 }
 
-/* ─── Animation demos ────────────────────────────────────────────── */
+/* ─── Animation demos ───────────────────────────────────────────── */
 
 function TiltDemo() {
   const cardRef = useRef<HTMLDivElement>(null);
-  const rawX = useMotionValue(0);
-  const rawY = useMotionValue(0);
+  const rawX = useMotionValue(0), rawY = useMotionValue(0);
   const rotateX = useSpring(useTransform(rawY, [-0.5, 0.5], [14, -14]), { stiffness: 280, damping: 28 });
   const rotateY = useSpring(useTransform(rawX, [-0.5, 0.5], [-14, 14]), { stiffness: 280, damping: 28 });
   const glowX = useSpring(useTransform(rawX, [-0.5, 0.5], [0, 100]), { stiffness: 200, damping: 30 });
   const glowY = useSpring(useTransform(rawY, [-0.5, 0.5], [0, 100]), { stiffness: 200, damping: 30 });
-
   function onMove(e: React.MouseEvent<HTMLDivElement>) {
     if (!cardRef.current) return;
     const r = cardRef.current.getBoundingClientRect();
     rawX.set((e.clientX - r.left) / r.width - 0.5);
     rawY.set((e.clientY - r.top) / r.height - 0.5);
   }
-  function onLeave() { rawX.set(0); rawY.set(0); }
-
   return (
-    <div ref={cardRef} onMouseMove={onMove} onMouseLeave={onLeave}
+    <div ref={cardRef} onMouseMove={onMove} onMouseLeave={() => { rawX.set(0); rawY.set(0); }}
       className="w-full h-full flex items-center justify-center" style={{ perspective: 1000 }}>
       <motion.div style={{ rotateX, rotateY, transformStyle: "preserve-3d" }} className="relative w-36 h-44">
-        <div className="absolute inset-0 bg-[#111] flex flex-col items-center justify-center gap-3"
-          style={{ transform: "translateZ(0px)" }}>
+        <div className="absolute inset-0 bg-white/8 border border-white/15 flex flex-col items-center justify-center gap-3">
           <motion.div animate={{ scale: [1, 1.05, 1] }} transition={{ repeat: Infinity, duration: 3 }}
             className="w-10 h-10 rounded-full bg-white/20" />
           <div className="w-20 h-2 bg-white/20" />
-          <div className="w-14 h-2 bg-white/15" />
+          <div className="w-14 h-2 bg-white/10" />
         </div>
-        <div className="absolute -top-4 -right-4 w-14 h-14 border border-[#ddd] bg-white"
+        <div className="absolute -top-4 -right-4 w-14 h-14 border border-white/20 bg-white/5"
           style={{ transform: "translateZ(32px)" }} />
-        <div className="absolute -bottom-3 -left-3 w-9 h-9 bg-[#f5f5f5] border border-[#ddd]"
+        <div className="absolute -bottom-3 -left-3 w-9 h-9 bg-white/8 border border-white/15"
           style={{ transform: "translateZ(18px)" }} />
         <motion.div className="absolute inset-0 pointer-events-none"
-          style={{ background: `radial-gradient(circle at ${glowX}% ${glowY}%, rgba(255,255,255,0.12) 0%, transparent 65%)`, transform: "translateZ(1px)" }} />
+          style={{ background: `radial-gradient(circle at ${glowX}% ${glowY}%, rgba(255,255,255,0.14) 0%, transparent 65%)`, transform: "translateZ(1px)" }} />
       </motion.div>
     </div>
   );
@@ -244,7 +194,7 @@ function TextRevealDemo() {
               <div key={i} className="overflow-hidden">
                 <motion.span initial={{ y: 56, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: i * 0.14, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-                  className="text-3xl md:text-4xl font-semibold text-[#111] block">{w}
+                  className="text-3xl md:text-4xl font-semibold text-white block">{w}
                 </motion.span>
               </div>
             ))}
@@ -252,7 +202,7 @@ function TextRevealDemo() {
         </AnimatePresence>
       </div>
       <button onClick={() => setKey(k => k + 1)}
-        className="inline-flex items-center gap-2 text-xs text-[#999] border border-[#e8e8e8] px-4 py-2 rounded-full hover:border-[#111] hover:text-[#111] transition-all"
+        className="inline-flex items-center gap-2 text-xs text-white/40 border border-white/15 px-4 py-2 rounded-full hover:border-white/50 hover:text-white/70 transition-all"
         data-testid="button-replay-text">
         <RotateCcw className="w-3 h-3" /> Replay
       </button>
@@ -294,16 +244,15 @@ function CounterDemo() {
       <div className="grid grid-cols-3 gap-4 w-full">
         {targets.map((_, i) => (
           <div key={i} className="text-center">
-            <p className="text-4xl md:text-5xl font-semibold text-[#111] tabular-nums"
-              data-testid={`stat-count-${i}`}>
+            <p className="text-4xl md:text-5xl font-semibold text-white tabular-nums" data-testid={`stat-count-${i}`}>
               {counts[i]}{suffixes[i]}
             </p>
-            <p className="text-xs text-[#999] mt-2">{labels[i]}</p>
+            <p className="text-xs text-white/35 mt-2">{labels[i]}</p>
           </div>
         ))}
       </div>
       <button onClick={() => { played.current = false; run(); }}
-        className="inline-flex items-center gap-2 text-xs text-[#999] border border-[#e8e8e8] px-4 py-2 rounded-full hover:border-[#111] hover:text-[#111] transition-all"
+        className="inline-flex items-center gap-2 text-xs text-white/40 border border-white/15 px-4 py-2 rounded-full hover:border-white/50 hover:text-white/70 transition-all"
         data-testid="button-replay-counter">
         <RotateCcw className="w-3 h-3" /> Replay
       </button>
@@ -324,60 +273,65 @@ function ParallaxDemo() {
   const aY = useSpring(useTransform(my, [-0.5, 0.5], [18, -18]), { stiffness: 90, damping: 18 });
   const cX = useSpring(useTransform(mx, [-0.5, 0.5], [-22, 22]), { stiffness: 70, damping: 16 });
   const cY = useSpring(useTransform(my, [-0.5, 0.5], [22, -22]), { stiffness: 70, damping: 16 });
-
   function onMove(e: React.MouseEvent<HTMLDivElement>) {
     if (!ref.current) return;
     const r = ref.current.getBoundingClientRect();
     mx.set((e.clientX - r.left) / r.width - 0.5);
     my.set((e.clientY - r.top) / r.height - 0.5);
   }
-
   return (
     <div ref={ref} onMouseMove={onMove} onMouseLeave={() => { mx.set(0); my.set(0); }}
       className="w-full h-full flex items-center justify-center relative overflow-hidden">
-      <motion.div style={{ x: bX, y: bY }} className="absolute w-40 h-40 border border-[#ddd]" />
-      <motion.div style={{ x: mX, y: mY }} className="absolute w-24 h-24 border border-[#ccc] bg-[#f5f5f5]" />
-      <motion.div style={{ x: fX, y: fY }} className="absolute w-12 h-12 bg-[#111]" />
-      <motion.div style={{ x: aX, y: aY }} className="absolute w-6 h-6 border border-[#ddd] top-[calc(50%-40px)] left-[calc(50%+36px)]" />
-      <motion.div style={{ x: cX, y: cY }} className="absolute w-5 h-5 bg-[#e0e0e0] bottom-[calc(50%-40px)] left-[calc(50%-50px)]" />
+      <motion.div style={{ x: bX, y: bY }} className="absolute w-40 h-40 border border-white/15" />
+      <motion.div style={{ x: mX, y: mY }} className="absolute w-24 h-24 border border-white/20 bg-white/5" />
+      <motion.div style={{ x: fX, y: fY }} className="absolute w-12 h-12 bg-white/80" />
+      <motion.div style={{ x: aX, y: aY }} className="absolute w-6 h-6 border border-white/20 top-[calc(50%-40px)] left-[calc(50%+36px)]" />
+      <motion.div style={{ x: cX, y: cY }} className="absolute w-5 h-5 bg-white/15 bottom-[calc(50%-40px)] left-[calc(50%-50px)]" />
     </div>
   );
 }
 
-/* ─── Demo card wrapper ──────────────────────────────────────────── */
+/* ─── Demo card wrapper ─────────────────────────────────────────── */
 
 function DemoCard({ tag, label, desc, children }: { tag: string; label: string; desc: string; children: React.ReactNode }) {
   return (
-    <div className="feature-card flex flex-col overflow-hidden">
-      <div className="px-6 pt-6 pb-3 flex items-center justify-between" style={{ borderBottom: "1px solid #f0f0f0" }}>
-        <span className="text-[11px] font-medium text-[#999] uppercase tracking-widest">{tag}</span>
-        <span className="text-[10px] text-[#ccc] font-mono">live</span>
+    <div className="flex flex-col overflow-hidden rounded-2xl" style={{ background: "#141414", border: "1px solid rgba(255,255,255,0.08)" }}>
+      <div className="px-6 pt-6 pb-3 flex items-center justify-between" style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+        <span className="text-[11px] font-medium text-white/35 uppercase tracking-widest">{tag}</span>
+        <span className="text-[10px] text-white/20 font-mono">live</span>
       </div>
       <div className="flex-1 min-h-[220px] md:min-h-[260px] px-6 py-4">{children}</div>
-      <div className="px-6 pb-7 pt-4" style={{ borderTop: "1px solid #f0f0f0" }}>
-        <p className="text-lg font-semibold text-[#111] mb-1">{label}</p>
-        <p className="text-sm text-[#555]">{desc}</p>
+      <div className="px-6 pb-7 pt-4" style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+        <p className="text-lg font-semibold text-white mb-1">{label}</p>
+        <p className="text-sm text-white/45">{desc}</p>
       </div>
     </div>
   );
 }
 
-/* ─── FAQ item ───────────────────────────────────────────────────── */
+/* ─── Squarespace-style dark accordion ──────────────────────────── */
 
-function FAQItem({ q, a, isOpen, onToggle }: { q: string; a: string; isOpen: boolean; onToggle: () => void }) {
+function DarkAccordionItem({
+  title, body, num, isOpen, onToggle, testId,
+}: {
+  title: string; body: string; num?: string; isOpen: boolean; onToggle: () => void; testId?: string;
+}) {
   return (
-    <div style={{ borderBottom: "1px solid #e8e8e8" }}>
+    <div style={{ borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
       <button
-        className="w-full flex items-center justify-between py-5 text-left group"
+        className="w-full flex items-center justify-between py-6 text-left group"
         onClick={onToggle}
-        data-testid={`faq-${q.slice(0, 20).replace(/\s/g, "-").toLowerCase()}`}
+        data-testid={testId}
       >
-        <span className="text-[17px] font-medium text-[#111] group-hover:opacity-70 transition-opacity pr-8">{q}</span>
-        <ChevronDown
-          className="flex-shrink-0 text-[#999] transition-transform duration-300"
-          size={18}
-          style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
-        />
+        <div className="flex items-center gap-6 flex-1 min-w-0 pr-8">
+          {num && <span className="text-white/25 text-base font-medium shrink-0 w-8">{num}</span>}
+          <span className="text-[17px] md:text-[19px] font-medium text-white group-hover:text-white/70 transition-colors leading-snug">
+            {title}
+          </span>
+        </div>
+        <span className="text-white/50 text-2xl font-light shrink-0 w-6 text-center leading-none select-none transition-colors group-hover:text-white">
+          {isOpen ? "−" : "+"}
+        </span>
       </button>
       <AnimatePresence initial={false}>
         {isOpen && (
@@ -385,10 +339,12 @@ function FAQItem({ q, a, isOpen, onToggle }: { q: string; a: string; isOpen: boo
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
+            transition={{ duration: 0.38, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="overflow-hidden"
           >
-            <p className="pb-5 text-[17px] leading-relaxed text-[#555]">{a}</p>
+            <p className={`pb-6 text-[16px] md:text-[17px] leading-relaxed text-white/50 ${num ? "pl-14" : ""}`}>
+              {body}
+            </p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -396,12 +352,11 @@ function FAQItem({ q, a, isOpen, onToggle }: { q: string; a: string; isOpen: boo
   );
 }
 
-/* ─── Portfolio circular lens (Squarespace-exact ball/peephole effect) ── */
+/* ─── Portfolio circular lens ───────────────────────────────────── */
 
 function PortfolioLens() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const rawX = useMotionValue(0);
-  const rawY = useMotionValue(0);
+  const rawX = useMotionValue(0), rawY = useMotionValue(0);
   const lensX = useSpring(rawX, { stiffness: 220, damping: 28 });
   const lensY = useSpring(rawY, { stiffness: 220, damping: 28 });
   const LENS = 320;
@@ -413,10 +368,8 @@ function PortfolioLens() {
   function onMove(e: React.MouseEvent<HTMLDivElement>) {
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    rawX.set(x);
-    rawY.set(y);
+    const x = e.clientX - rect.left, y = e.clientY - rect.top;
+    rawX.set(x); rawY.set(y);
     setLensIdx(Math.max(0, Math.min(Math.floor((x / rect.width) * portfolioSites.length), portfolioSites.length - 1)));
   }
 
@@ -424,62 +377,42 @@ function PortfolioLens() {
     <div
       ref={containerRef}
       className="relative overflow-hidden cursor-none select-none w-full"
-      style={{ height: 520, background: "#111" }}
+      style={{ height: 520, background: "#0a0a0a" }}
       onMouseMove={onMove}
       onMouseEnter={() => setIsInside(true)}
       onMouseLeave={() => setIsInside(false)}
     >
-      {/* Column labels at bottom */}
       <div className="absolute inset-0 grid pointer-events-none"
         style={{ gridTemplateColumns: `repeat(${portfolioSites.length}, 1fr)` }}>
         {portfolioSites.map((site, i) => (
           <div key={i} className="flex flex-col justify-end p-6"
-            style={{ borderRight: i < portfolioSites.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
-            <p className="text-white/25 text-[10px] uppercase tracking-widest mb-1">{site.tag}</p>
-            <p className="text-white/40 text-sm font-medium">{site.title}</p>
+            style={{ borderRight: i < portfolioSites.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
+            <p className="text-white/20 text-[10px] uppercase tracking-widest mb-1">{site.tag}</p>
+            <p className="text-white/35 text-sm font-medium">{site.title}</p>
           </div>
         ))}
       </div>
-
-      {/* Idle hint */}
       <AnimatePresence>
         {!isInside && (
-          <motion.p
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="absolute inset-0 flex items-center justify-center pointer-events-none text-white/20 text-lg tracking-wide"
-          >
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="absolute inset-0 flex items-center justify-center pointer-events-none text-white/18 text-lg tracking-wide">
             Move your cursor to explore
           </motion.p>
         )}
       </AnimatePresence>
-
-      {/* Circular lens */}
       <AnimatePresence>
         {isInside && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.55 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.55 }}
+            initial={{ opacity: 0, scale: 0.55 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.55 }}
             transition={{ duration: 0.32, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="absolute pointer-events-none overflow-hidden"
-            style={{
-              width: LENS, height: LENS, borderRadius: "50%",
-              x: lensLeft, y: lensTop,
-              border: "1.5px solid rgba(255,255,255,0.22)",
-              boxShadow: "0 0 0 1px rgba(255,255,255,0.06), 0 28px 80px rgba(0,0,0,0.75)",
-            }}
+            style={{ width: LENS, height: LENS, borderRadius: "50%", x: lensLeft, y: lensTop,
+              border: "1.5px solid rgba(255,255,255,0.22)", boxShadow: "0 0 0 1px rgba(255,255,255,0.06), 0 28px 80px rgba(0,0,0,0.75)" }}
           >
             <AnimatePresence mode="wait">
-              <motion.img
-                key={lensIdx}
-                src={portfolioSites[lensIdx].img}
-                alt={portfolioSites[lensIdx].title}
-                initial={{ opacity: 0, scale: 1.08 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.22 }}
-                className="w-full h-full object-cover"
-              />
+              <motion.img key={lensIdx} src={portfolioSites[lensIdx].img} alt={portfolioSites[lensIdx].title}
+                initial={{ opacity: 0, scale: 1.08 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
+                transition={{ duration: 0.22 }} className="w-full h-full object-cover" />
             </AnimatePresence>
             <div className="absolute inset-x-0 bottom-0 p-5 text-center"
               style={{ background: "linear-gradient(to top, rgba(0,0,0,0.82), transparent)" }}>
@@ -493,40 +426,7 @@ function PortfolioLens() {
   );
 }
 
-/* ─── Process accordion item ─────────────────────────────────────── */
-
-function ProcessItem({ step, isOpen, onToggle }: {
-  step: typeof processSteps[0]; isOpen: boolean; onToggle: () => void;
-}) {
-  return (
-    <div style={{ borderBottom: "1px solid #e8e8e8" }}>
-      <button
-        className="w-full flex items-center gap-6 py-5 text-left group"
-        onClick={onToggle}
-        data-testid={`process-${step.num}`}
-      >
-        <span className="text-xl font-medium text-[#ccc] w-10 shrink-0">{step.num}</span>
-        <span className="flex-1 text-[17px] font-medium text-[#111] group-hover:opacity-60 transition-opacity">{step.title}</span>
-        <ChevronDown size={18} className="text-[#999] shrink-0 transition-transform duration-300"
-          style={{ transform: isOpen ? "rotate(180deg)" : "none" }} />
-      </button>
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="overflow-hidden"
-          >
-            <p className="pb-5 pl-16 text-[17px] leading-relaxed text-[#555]">{step.desc}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
-
-/* ─── Reveal wrapper ─────────────────────────────────────────────── */
+/* ─── Reveal wrapper ────────────────────────────────────────────── */
 
 function Reveal({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
   return (
@@ -542,21 +442,19 @@ function Reveal({ children, delay = 0, className = "" }: { children: React.React
   );
 }
 
-/* ─── Main page ──────────────────────────────────────────────────── */
+/* ─── Main page ─────────────────────────────────────────────────── */
 
 export default function Home() {
   const [scene, setScene] = useState(0);
   const [activeTab, setActiveTab] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [hoveredPortfolio, setHoveredPortfolio] = useState<number | null>(null);
-  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [openProcess, setOpenProcess] = useState<number | null>(null);
   const tabDirRef = useRef(1);
+
   const handleTabChange = useCallback((i: number) => {
     tabDirRef.current = i > activeTab ? 1 : -1;
     setActiveTab(i);
   }, [activeTab]);
-  const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const id = setInterval(() => setScene(s => (s + 1) % heroScenes.length), 4500);
@@ -567,58 +465,40 @@ export default function Home() {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
     transition: { duration: 0.6, delay, ease: [0.25, 0.46, 0.45, 0.94] as any },
-    style: { animationFillMode: "both" as const },
   });
 
   return (
-    <div className="min-h-screen bg-white text-[#111] overflow-x-hidden">
+    <div className="min-h-screen bg-[#0a0a0a] text-white overflow-x-hidden">
       <Navbar />
 
       {/* ── Hero ── */}
-      <section ref={heroRef} className="relative min-h-screen flex items-center overflow-hidden">
-        {/* Background scenes */}
+      <section className="relative min-h-screen flex items-center overflow-hidden">
         {heroScenes.map((src, i) => (
-          <div
-            key={i}
-            className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage: `url(${src})`,
-              opacity: i === scene ? 1 : 0,
-              transition: "opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1)",
-            }}
-          />
+          <div key={i} className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${src})`, opacity: i === scene ? 1 : 0, transition: "opacity 1.2s cubic-bezier(0.4,0,0.2,1)" }} />
         ))}
-        <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.38)" }} />
+        <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.48)" }} />
 
         <div className="relative z-10 w-full max-w-[1280px] mx-auto px-6 md:px-12 py-32 md:py-0 md:min-h-screen flex items-center">
           <div className="flex flex-col md:flex-row items-center gap-12 md:gap-16 w-full">
-
-            {/* Left: text */}
             <div className="flex-1 min-w-0 max-w-[540px]">
-              <motion.p {...heroReveal(0.1)}
-                className="text-white/70 text-[11px] font-medium tracking-[0.2em] uppercase mb-5">
+              <motion.p {...heroReveal(0.1)} className="text-white/60 text-[11px] font-medium tracking-[0.2em] uppercase mb-5">
                 Vaulted Web Solutions
               </motion.p>
-              <motion.h1 {...heroReveal(0.25)}
-                className="text-white font-medium leading-[1.1] tracking-tight mb-2"
+              <motion.h1 {...heroReveal(0.25)} className="text-white font-medium leading-[1.1] tracking-tight mb-2"
                 style={{ fontSize: "clamp(2.4rem,6vw,4.5rem)", letterSpacing: "-0.02em" }}>
                 A website
               </motion.h1>
-              <motion.h1 {...heroReveal(0.38)}
-                className="text-white font-medium leading-[1.1] tracking-tight mb-7"
+              <motion.h1 {...heroReveal(0.38)} className="text-white font-medium leading-[1.1] tracking-tight mb-7"
                 style={{ fontSize: "clamp(2.4rem,6vw,4.5rem)", letterSpacing: "-0.02em" }}>
                 built right.
               </motion.h1>
-              <motion.p {...heroReveal(0.52)}
-                className="text-white/85 text-[17px] leading-relaxed mb-8"
-                style={{ maxWidth: 420 }}>
+              <motion.p {...heroReveal(0.52)} className="text-white/80 text-[17px] leading-relaxed mb-8" style={{ maxWidth: 420 }}>
                 Hand-written code. No templates. No compromises.
               </motion.p>
               <motion.div {...heroReveal(0.68)} className="flex flex-wrap items-center gap-4">
-                <button
-                  onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-                  className="sqsp-btn-white"
-                  data-testid="button-start-project">
+                <button onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+                  className="sqsp-btn-white" data-testid="button-start-project">
                   Get started
                 </button>
                 <a href="https://cselcincy.org" target="_blank" rel="noopener noreferrer"
@@ -627,75 +507,68 @@ export default function Home() {
                 </a>
               </motion.div>
             </div>
-
-            {/* Right: floating mockup card */}
             <div className="hidden md:flex flex-1 justify-end">
               <MockupCard />
             </div>
-
           </div>
         </div>
 
-        {/* Scene indicators */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-10">
           {heroScenes.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setScene(i)}
+            <button key={i} onClick={() => setScene(i)}
               className="h-[2px] transition-all duration-500 rounded-full"
-              style={{ width: i === scene ? 28 : 10, background: i === scene ? "#fff" : "rgba(255,255,255,0.4)" }}
-            />
+              style={{ width: i === scene ? 28 : 10, background: i === scene ? "#fff" : "rgba(255,255,255,0.3)" }} />
           ))}
         </div>
       </section>
 
       {/* ── Stats strip ── */}
-      <section style={{ borderTop: "1px solid #e8e8e8", borderBottom: "1px solid #e8e8e8" }}>
+      <section style={{ borderTop: "1px solid rgba(255,255,255,0.08)", borderBottom: "1px solid rgba(255,255,255,0.08)", background: "#111" }}>
         <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-14">
           <Reveal className="mb-10">
-            <p className="text-center text-[#555] text-[17px]">Join businesses that chose real code over page builders.</p>
+            <p className="text-center text-white/45 text-[17px]">Join businesses that chose real code over page builders.</p>
           </Reveal>
-          <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-[#e8e8e8]">
+          <div className="grid grid-cols-2 lg:grid-cols-4" style={{ borderLeft: "1px solid rgba(255,255,255,0.08)" }}>
             {[
-              { target: 100, suffix: "%", label: "Custom code, always" },
-              { target: 100, suffix: "%", label: "Clients who own their code" },
-              { target: 35, suffix: "+/hr", label: "Starting hourly rate ($)" },
-              { target: 24, suffix: "hr", label: "Average response time" },
+              { target: 100, suffix: "%",    label: "Custom code, always" },
+              { target: 100, suffix: "%",    label: "Clients who own their code" },
+              { target: 35,  suffix: "+/hr", label: "Starting hourly rate ($)" },
+              { target: 24,  suffix: "hr",   label: "Average response time" },
             ].map((s, i) => (
-              <div key={i} className="py-6">
+              <div key={i} className="py-6" style={{ borderRight: "1px solid rgba(255,255,255,0.08)" }}>
                 <SlotStat target={s.target} suffix={s.suffix} label={s.label} />
-                <p className="text-center text-[#555] text-[15px] mt-2">{s.label}</p>
+                <p className="text-center text-white/35 text-[14px] mt-2">{s.label}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── Services — "Grow your business" Squarespace-exact layout ── */}
-      <section id="services" className="py-[120px] max-md:py-[72px] overflow-hidden">
+      {/* ── Services — "Grow your business" — centered, full-width image ── */}
+      <section id="services" className="py-[120px] max-md:py-[72px] overflow-hidden" style={{ background: "#0a0a0a" }}>
         <div className="max-w-[1280px] mx-auto px-6 md:px-12">
 
-          {/* Header */}
-          <Reveal className="mb-10">
-            <h2 className="text-[#111] font-medium mb-3" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
+          {/* Centered header */}
+          <Reveal className="text-center mb-10">
+            <h2 className="text-white font-medium mb-3" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
               Grow your business.
             </h2>
-            <p className="text-[#555] text-[17px] max-w-xl leading-relaxed">
+            <p className="text-white/45 text-[17px] max-w-xl leading-relaxed mx-auto">
               Whatever your business, we build it from scratch — no templates, no shortcuts.
             </p>
           </Reveal>
 
-          {/* Horizontal pill tabs */}
-          <div className="overflow-x-auto scrollbar-hide mb-10">
-            <div className="flex gap-2 w-max">
+          {/* Centered pill tabs */}
+          <div className="overflow-x-auto scrollbar-hide mb-8">
+            <div className="flex gap-2 justify-center w-max mx-auto">
               {serviceTabs.map((tab, i) => (
                 <button
                   key={i}
                   onClick={() => handleTabChange(i)}
                   className="px-5 py-2 text-[14px] rounded-full border transition-all duration-200 whitespace-nowrap"
                   style={activeTab === i
-                    ? { background: "#111", color: "#fff", border: "1px solid #111" }
-                    : { background: "#fff", color: "#555", border: "1px solid #ddd" }
+                    ? { background: "#fff", color: "#0a0a0a", border: "1px solid #fff" }
+                    : { background: "transparent", color: "rgba(255,255,255,0.5)", border: "1px solid rgba(255,255,255,0.18)" }
                   }
                   data-testid={`tab-service-${i}`}
                 >
@@ -705,54 +578,52 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Split: LEFT = horizontally sliding image, RIGHT = description */}
-          <div className="grid md:grid-cols-[55%_1fr] gap-10 md:gap-16 items-center">
+          {/* Full-width image with text overlay on left */}
+          <div className="relative w-full overflow-hidden rounded-2xl" style={{ minHeight: 520 }}>
+            <AnimatePresence mode="wait" custom={tabDirRef.current} initial={false}>
+              <motion.img
+                key={activeTab}
+                src={serviceTabs[activeTab].img}
+                alt={serviceTabs[activeTab].heading}
+                custom={tabDirRef.current}
+                variants={{
+                  enter: (d: number) => ({ x: d * 60, opacity: 0 }),
+                  center: { x: 0, opacity: 1 },
+                  exit:  (d: number) => ({ x: d * -60, opacity: 0 }),
+                }}
+                initial="enter" animate="center" exit="exit"
+                transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                className="absolute inset-0 w-full h-full object-cover"
+                loading="lazy"
+              />
+            </AnimatePresence>
 
-            {/* Image — slides horizontally on tab change */}
-            <div className="overflow-hidden rounded-2xl" style={{ aspectRatio: "16/10", boxShadow: "0 8px 48px rgba(0,0,0,0.12)" }}>
-              <AnimatePresence mode="wait" custom={tabDirRef.current} initial={false}>
-                <motion.img
-                  key={activeTab}
-                  src={serviceTabs[activeTab].img}
-                  alt={serviceTabs[activeTab].heading}
-                  custom={tabDirRef.current}
-                  variants={{
-                    enter: (d: number) => ({ x: d * 80, opacity: 0 }),
-                    center: { x: 0, opacity: 1 },
-                    exit:  (d: number) => ({ x: d * -80, opacity: 0 }),
-                  }}
-                  initial="enter" animate="center" exit="exit"
-                  transition={{ duration: 0.42, ease: [0.25, 0.46, 0.45, 0.94] }}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                />
-              </AnimatePresence>
-            </div>
+            {/* Dark gradient overlay — strong on left, fading right */}
+            <div className="absolute inset-0"
+              style={{ background: "linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.55) 45%, rgba(0,0,0,0.15) 100%)" }} />
 
-            {/* Text — slides up on tab change */}
-            <div className="relative overflow-hidden min-h-[260px]">
+            {/* Text content — bottom left */}
+            <div className="relative z-10 flex items-end h-full" style={{ minHeight: 520 }}>
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                   key={activeTab}
-                  initial={{ opacity: 0, y: 28 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.38, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }}
+                  transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  className="p-10 md:p-14 max-w-lg"
                 >
-                  <p className="text-[11px] font-medium text-[#999] tracking-widest uppercase mb-4">
+                  <p className="text-[11px] font-medium text-white/45 tracking-widest uppercase mb-4">
                     {serviceTabs[activeTab].label}
                   </p>
-                  <h3 className="text-[#111] font-medium mb-4"
-                    style={{ fontSize: "clamp(1.4rem,2.5vw,2rem)", letterSpacing: "-0.02em" }}>
+                  <h3 className="text-white font-medium mb-4" style={{ fontSize: "clamp(1.5rem,3vw,2.25rem)", letterSpacing: "-0.02em" }}>
                     {serviceTabs[activeTab].heading}
                   </h3>
-                  <p className="text-[#555] text-[17px] leading-relaxed mb-5">
+                  <p className="text-white/65 text-[17px] leading-relaxed mb-3">
                     {serviceTabs[activeTab].desc}
                   </p>
-                  <p className="text-[14px] text-[#999] mb-8">Great for: {serviceTabs[activeTab].tags}</p>
+                  <p className="text-[14px] text-white/35 mb-8">Great for: {serviceTabs[activeTab].tags}</p>
                   <button
                     onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-                    className="sqsp-btn-primary"
+                    className="sqsp-btn-white text-sm"
                     data-testid={`service-cta-${activeTab}`}
                   >
                     Start this project
@@ -760,74 +631,40 @@ export default function Home() {
                 </motion.div>
               </AnimatePresence>
             </div>
-
           </div>
+
         </div>
       </section>
 
-      {/* ── Feature cards ── */}
-      <section style={{ background: "#fafafa", borderTop: "1px solid #e8e8e8", borderBottom: "1px solid #e8e8e8" }}
-        className="py-[120px] max-md:py-[72px]">
-        <div className="max-w-[1280px] mx-auto px-6 md:px-12">
-          <Reveal className="mb-14">
-            <h2 className="text-[#111] font-medium mb-4" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
-              Everything you need.<br />Nothing you don't.
-            </h2>
-            <p className="text-[#555] text-[17px] max-w-xl leading-relaxed">
-              Every project includes the full stack — no upsells, no hidden add-ons.
-            </p>
-          </Reveal>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featureCards.map((f, i) => (
-              <Reveal key={i} delay={i * 0.06}>
-                <div className={`feature-card overflow-hidden ${i === 0 ? "shadow-lg" : ""}`}
-                  style={i === 0 ? { transform: "scale(1.02)", boxShadow: "0 8px 40px rgba(0,0,0,0.12)" } : {}}>
-                  <div className="p-8 pb-5">
-                    <h3 className="text-[18px] font-semibold text-[#111] mb-2">{f.title}</h3>
-                    <p className="text-[#555] text-[15px] leading-relaxed">{f.desc}</p>
-                  </div>
-                  <img src={f.preview} alt={f.title}
-                    className="w-full h-44 object-cover opacity-90"
-                    loading="lazy" />
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Portfolio — interactive mouse-tracking ── */}
-      <section id="work" className="py-[120px] max-md:py-[72px]">
+      {/* ── Portfolio — interactive circular lens ── */}
+      <section id="work" className="py-[120px] max-md:py-[72px]" style={{ background: "#111" }}>
         <div className="max-w-[1280px] mx-auto px-6 md:px-12">
           <Reveal className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
             <div>
-              <h2 className="text-[#111] font-medium mb-3" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
+              <h2 className="text-white font-medium mb-3" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
                 Made with Vaulted
               </h2>
-              <p className="text-[#555] text-[17px] max-w-md leading-relaxed">Real sites, hand-built for real businesses.</p>
+              <p className="text-white/45 text-[17px] max-w-md leading-relaxed">Real sites, hand-built for real businesses.</p>
             </div>
             <a href="https://cselcincy.org" target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-[14px] font-medium text-[#111] hover:opacity-60 transition-opacity"
+              className="inline-flex items-center gap-2 text-[14px] font-medium text-white/60 hover:text-white transition-colors"
               data-testid="link-view-all-work">
               See our featured project <ArrowRight className="w-4 h-4" />
             </a>
           </Reveal>
-
-          {/* Circular lens — Squarespace-exact ball effect */}
           <PortfolioLens />
         </div>
       </section>
 
       {/* ── Animation showcase ── */}
-      <section id="capabilities" className="py-[120px] max-md:py-[72px]"
-        style={{ background: "#fafafa", borderTop: "1px solid #e8e8e8", borderBottom: "1px solid #e8e8e8" }}>
+      <section id="capabilities" className="py-[120px] max-md:py-[72px]" style={{ background: "#0a0a0a", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
         <div className="max-w-[1280px] mx-auto px-6 md:px-12">
           <Reveal className="mb-14">
-            <p className="text-[11px] font-medium text-[#999] uppercase tracking-widest mb-3">Interactive demos — live on this page</p>
-            <h2 className="text-[#111] font-medium mb-4" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
+            <p className="text-[11px] font-medium text-white/35 uppercase tracking-widest mb-3">Interactive demos — live on this page</p>
+            <h2 className="text-white font-medium mb-4" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
               Built to move.
             </h2>
-            <p className="text-[#555] text-[17px] max-w-2xl leading-relaxed">
+            <p className="text-white/45 text-[17px] max-w-2xl leading-relaxed">
               Every animation below is hand-coded into this page. This is what we build into yours.
             </p>
           </Reveal>
@@ -840,24 +677,29 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Process — accordion ── */}
-      <section className="py-[120px] max-md:py-[72px]">
+      {/* ── How it works — dark Squarespace accordion ── */}
+      <section className="py-[120px] max-md:py-[72px]" style={{ background: "#111", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
         <div className="max-w-[1280px] mx-auto px-6 md:px-12">
-          <Reveal className="mb-14">
-            <h2 className="text-[#111] font-medium mb-4" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
+          <Reveal className="mb-4">
+            <h2 className="text-white font-medium" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
               How it works
             </h2>
-            <p className="text-[#555] text-[17px] max-w-xl leading-relaxed">
+          </Reveal>
+          <Reveal delay={0.05} className="mb-14">
+            <p className="text-white/40 text-[17px] max-w-xl leading-relaxed">
               A clear process from first conversation to launch day — no surprises.
             </p>
           </Reveal>
-          <div className="max-w-2xl" style={{ borderTop: "1px solid #e8e8e8" }}>
+          <div className="max-w-3xl" style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}>
             {processSteps.map((step, i) => (
-              <ProcessItem
+              <DarkAccordionItem
                 key={i}
-                step={step}
+                num={step.num}
+                title={step.title}
+                body={step.desc}
                 isOpen={openProcess === i}
                 onToggle={() => setOpenProcess(openProcess === i ? null : i)}
+                testId={`process-${step.num}`}
               />
             ))}
           </div>
@@ -865,46 +707,43 @@ export default function Home() {
       </section>
 
       {/* ── Pricing ── */}
-      <section id="pricing" className="py-[120px] max-md:py-[72px]"
-        style={{ background: "#fafafa", borderTop: "1px solid #e8e8e8", borderBottom: "1px solid #e8e8e8" }}>
+      <section id="pricing" className="py-[120px] max-md:py-[72px]" style={{ background: "#0a0a0a", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
         <div className="max-w-[1280px] mx-auto px-6 md:px-12">
           <Reveal className="mb-14">
-            <h2 className="text-[#111] font-medium mb-4" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
+            <h2 className="text-white font-medium mb-4" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
               Simple, honest pricing.
             </h2>
-            <p className="text-[#555] text-[17px] max-w-xl leading-relaxed">
+            <p className="text-white/45 text-[17px] max-w-xl leading-relaxed">
               No retainers. No surprise invoices. Just straightforward hourly work.
             </p>
           </Reveal>
           <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start">
             <Reveal>
               <div className="mb-10">
-                <span className="font-semibold leading-none tracking-tight" style={{ fontSize: "clamp(4rem,10vw,7rem)", color: "#111" }}>$35</span>
-                <span className="font-medium text-4xl md:text-5xl text-[#bbb]"> – $50</span>
-                <span className="text-xl text-[#999] ml-2">/hr</span>
+                <span className="font-semibold leading-none tracking-tight text-white" style={{ fontSize: "clamp(4rem,10vw,7rem)" }}>$35</span>
+                <span className="font-medium text-4xl md:text-5xl text-white/30"> – $50</span>
+                <span className="text-xl text-white/25 ml-2">/hr</span>
               </div>
-              <p className="text-[#555] text-[17px] leading-relaxed mb-10 max-w-md">
+              <p className="text-white/45 text-[17px] leading-relaxed mb-10 max-w-md">
                 Rate depends on project scope and complexity. Most projects are estimated upfront — you'll always know what you're paying before we start.
               </p>
-              <button
-                onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-                className="sqsp-btn-primary"
-                data-testid="button-get-quote">
+              <button onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+                className="sqsp-btn-white" data-testid="button-get-quote">
                 Get a free quote
               </button>
             </Reveal>
             <Reveal delay={0.1}>
-              <p className="text-[11px] font-medium text-[#999] uppercase tracking-widest mb-8">What's included</p>
-              <div style={{ borderTop: "1px solid #e8e8e8" }}>
+              <p className="text-[11px] font-medium text-white/30 uppercase tracking-widest mb-8">What's included</p>
+              <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}>
                 {["Custom design & development", "Mobile-first responsive layouts", "SEO-optimized structure", "Security hardening", "Performance tuning", "Post-launch support"].map((item, i) => (
                   <div key={i} className="py-4 flex items-center justify-between group"
-                    style={{ borderBottom: "1px solid #e8e8e8" }}>
-                    <span className="text-[17px] text-[#111]">{item}</span>
-                    <span className="text-[14px] text-[#999] opacity-0 group-hover:opacity-100 transition-opacity">Included ✓</span>
+                    style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+                    <span className="text-[17px] text-white/80">{item}</span>
+                    <span className="text-[14px] text-white/30 opacity-0 group-hover:opacity-100 transition-opacity">Included ✓</span>
                   </div>
                 ))}
               </div>
-              <p className="text-[14px] text-[#999] mt-8">
+              <p className="text-[14px] text-white/25 mt-8">
                 No subscription lock-in. Your code, your server, your way. You own everything we build.
               </p>
             </Reveal>
@@ -913,120 +752,93 @@ export default function Home() {
       </section>
 
       {/* ── Featured project ── */}
-      <section className="py-[120px] max-md:py-[72px]">
+      <section className="py-[120px] max-md:py-[72px]" style={{ background: "#111", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
         <div className="max-w-[1280px] mx-auto px-6 md:px-12">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <Reveal>
-              <p className="text-[11px] font-medium text-[#999] uppercase tracking-widest mb-5">Featured project</p>
-              <h2 className="text-[#111] font-medium mb-6" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
+              <p className="text-[11px] font-medium text-white/30 uppercase tracking-widest mb-5">Featured project</p>
+              <h2 className="text-white font-medium mb-6" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
                 CSEL Cincinnati
               </h2>
-              <p className="text-[#555] text-[17px] leading-relaxed mb-10 max-w-md">
+              <p className="text-white/50 text-[17px] leading-relaxed mb-10 max-w-md">
                 A complete platform for the Center for Social-Emotional Learning, serving schools across Greater Cincinnati with resource management, event calendars, and donation processing.
               </p>
               <div className="flex gap-4 flex-wrap">
                 <a href="https://cselcincy.org" target="_blank" rel="noopener noreferrer"
-                  className="sqsp-btn-primary" data-testid="link-featured-project">
+                  className="sqsp-btn-white" data-testid="link-featured-project">
                   Visit live site <ExternalLink size={14} />
                 </a>
-                <button
-                  onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-                  className="sqsp-btn-ghost">
+                <button onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+                  className="sqsp-btn-ghost !border-white/25 !text-white/60 hover:!bg-white hover:!text-black hover:!border-white">
                   Start your project
                 </button>
               </div>
             </Reveal>
             <Reveal delay={0.1}>
-              <div className="overflow-hidden rounded-2xl" style={{ aspectRatio: "4/3", boxShadow: "0 8px 40px rgba(0,0,0,0.10)" }}>
-                <img
-                  src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=1200&q=80"
-                  alt="CSEL Cincinnati"
-                  className="w-full h-full object-cover"
-                  loading="lazy" />
+              <div className="overflow-hidden rounded-2xl" style={{ aspectRatio: "4/3", boxShadow: "0 8px 60px rgba(0,0,0,0.5)" }}>
+                <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=1200&q=80"
+                  alt="CSEL Cincinnati" className="w-full h-full object-cover" loading="lazy" />
               </div>
             </Reveal>
           </div>
         </div>
       </section>
 
-      {/* ── FAQ ── */}
-      <section style={{ background: "#fafafa", borderTop: "1px solid #e8e8e8", borderBottom: "1px solid #e8e8e8" }}
-        className="py-[120px] max-md:py-[72px]">
+      {/* ── Common questions — dark Squarespace accordion ── */}
+      <section className="py-[120px] max-md:py-[72px]" style={{ background: "#0a0a0a", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
         <div className="max-w-[1280px] mx-auto px-6 md:px-12">
-          <Reveal className="mb-12">
-            <h2 className="text-[#111] font-medium" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
+          <Reveal className="mb-14">
+            <h2 className="text-white font-medium" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
               Common questions.
             </h2>
           </Reveal>
-          <div className="max-w-2xl" style={{ borderTop: "1px solid #e8e8e8" }}>
+          <div className="max-w-3xl" style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}>
             {faqs.map((faq, i) => (
-              <FAQItem key={i} q={faq.q} a={faq.a}
-                isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? null : i)} />
+              <DarkAccordionItem
+                key={i}
+                title={faq.q}
+                body={faq.a}
+                isOpen={openFaq === i}
+                onToggle={() => setOpenFaq(openFaq === i ? null : i)}
+                testId={`faq-${i}`}
+              />
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── Bottom CTA (Squarespace-style full-bleed "video" section) ── */}
-      <section className="relative overflow-hidden" style={{ minHeight: 600 }}>
-        <div className="absolute inset-0">
-          <img
-            src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1920&q=80"
-            alt=""
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.52)" }} />
-        </div>
-        <div className="relative z-10 flex flex-col items-center justify-center min-h-[600px] text-center px-6 py-24">
-          <Reveal>
-            <h2 className="text-white font-medium mb-5" style={{ fontSize: "clamp(2rem,5vw,3.25rem)", letterSpacing: "-0.02em" }}>
-              Start your project today.
-            </h2>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <p className="text-white/75 text-[17px] leading-relaxed max-w-lg mb-10">
-              Tell us what you're building. We'll give you a free estimate and get back within 24 hours.
-            </p>
-          </Reveal>
-          <Reveal delay={0.2}>
-            <div className="flex flex-wrap gap-4 justify-center">
-              <button
-                onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-                className="sqsp-btn-white"
-                data-testid="button-cta-bottom">
-                Get started
-              </button>
-              <a href="https://cselcincy.org" target="_blank" rel="noopener noreferrer"
-                className="sqsp-btn-ghost !border-white/60 !text-white hover:!bg-white hover:!text-[#111]">
-                See our work
-              </a>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+      {/* ── Contact — cycling photo background (same rolling images as hero) ── */}
+      <section id="contact" className="relative overflow-hidden" style={{ minHeight: 700 }}>
+        {/* Cycling background — same heroScenes rolling in sync */}
+        {heroScenes.map((src, i) => (
+          <div key={i} className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${src})`, opacity: i === scene ? 1 : 0, transition: "opacity 1.2s cubic-bezier(0.4,0,0.2,1)" }} />
+        ))}
+        <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.72)" }} />
 
-      {/* ── Contact — dark ── */}
-      <section id="contact" className="py-[120px] max-md:py-[72px]" style={{ background: "#111" }}>
-        <div className="max-w-[1280px] mx-auto px-6 md:px-12">
+        {/* Content */}
+        <div className="relative z-10 max-w-[1280px] mx-auto px-6 md:px-12 py-[120px] max-md:py-[72px]">
           <Reveal className="mb-14">
             <h2 className="text-white font-medium mb-4" style={{ fontSize: "clamp(1.75rem,4vw,3rem)", letterSpacing: "-0.02em" }}>
               Start a project.
             </h2>
-            <p className="text-white/55 text-[17px] max-w-xl leading-relaxed">
+            <p className="text-white/50 text-[17px] max-w-xl leading-relaxed">
               Tell us what you're building. We'll get back within 24 hours.
             </p>
           </Reveal>
+
           <div className="grid lg:grid-cols-2 gap-16 lg:gap-24">
-            <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}>
+            {/* Info rows */}
+            <div style={{ borderTop: "1px solid rgba(255,255,255,0.15)" }}>
               {[
                 { label: "Our work",      value: "cselcincy.org",           href: "https://cselcincy.org" },
-                { label: "Availability",  value: "Taking new projects now"                              },
-                { label: "Rate",          value: "$35–50 per hour"                                      },
-                { label: "Response time", value: "Within 24 hours"                                      },
+                { label: "Availability",  value: "Taking new projects now"                               },
+                { label: "Rate",          value: "$35–50 per hour"                                       },
+                { label: "Response time", value: "Within 24 hours"                                       },
               ].map((item, i) => (
                 <Reveal key={i} delay={i * 0.07}>
                   <div className="py-5 flex items-center justify-between gap-4"
-                    style={{ borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+                    style={{ borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
                     <p className="text-[14px] text-white/35 w-32 shrink-0">{item.label}</p>
                     {item.href ? (
                       <a href={item.href} target="_blank" rel="noopener noreferrer"
@@ -1040,9 +852,10 @@ export default function Home() {
                 </Reveal>
               ))}
             </div>
-            {/* Form in a raised dark card */}
+
+            {/* Form in glass card */}
             <Reveal delay={0.1}>
-              <div className="rounded-2xl p-8" style={{ background: "#1a1a1a", border: "1px solid rgba(255,255,255,0.08)" }}>
+              <div className="rounded-2xl p-8" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.12)", backdropFilter: "blur(12px)" }}>
                 <ContactForm />
               </div>
             </Reveal>
@@ -1050,7 +863,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Footer — dark ── */}
+      {/* ── Footer ── */}
       <footer style={{ background: "#0a0a0a", borderTop: "1px solid rgba(255,255,255,0.07)" }}>
         <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-14">
@@ -1067,9 +880,9 @@ export default function Home() {
               {
                 heading: "Work",
                 links: [
-                  { label: "Our Portfolio",    id: "work"         },
-                  { label: "CSEL Cincinnati",  url: "https://cselcincy.org" },
-                  { label: "Capabilities",     id: "capabilities" },
+                  { label: "Our Portfolio",   id: "work"         },
+                  { label: "CSEL Cincinnati", url: "https://cselcincy.org" },
+                  { label: "Capabilities",    id: "capabilities" },
                 ],
               },
               {
@@ -1089,19 +902,19 @@ export default function Home() {
               },
             ].map((col, ci) => (
               <div key={ci}>
-                <p className="text-[11px] font-semibold text-white/40 mb-4 uppercase tracking-widest">{col.heading}</p>
+                <p className="text-[11px] font-semibold text-white/30 mb-4 uppercase tracking-widest">{col.heading}</p>
                 <div className="space-y-2.5">
                   {col.links.map((link, li) => (
                     <div key={li}>
                       {"url" in link ? (
                         <a href={link.url as string} target="_blank" rel="noopener noreferrer"
-                          className="text-[13px] text-white/50 hover:text-white transition-colors block">
+                          className="text-[13px] text-white/40 hover:text-white transition-colors block">
                           {link.label}
                         </a>
                       ) : (
                         <button
                           onClick={() => document.getElementById(link.id as string)?.scrollIntoView({ behavior: "smooth" })}
-                          className="text-[13px] text-white/50 hover:text-white transition-colors text-left">
+                          className="text-[13px] text-white/40 hover:text-white transition-colors text-left">
                           {link.label}
                         </button>
                       )}
@@ -1114,11 +927,10 @@ export default function Home() {
 
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8"
             style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
-            <p className="text-[12px] text-white/25">© {new Date().getFullYear()} Vaulted Web Solutions. All rights reserved.</p>
+            <p className="text-[12px] text-white/20">© {new Date().getFullYear()} Vaulted Web Solutions. All rights reserved.</p>
             <div className="flex gap-5">
               {["Twitter", "LinkedIn", "GitHub"].map(s => (
-                <a key={s} href="#"
-                  className="text-[12px] text-white/30 hover:text-white transition-colors"
+                <a key={s} href="#" className="text-[12px] text-white/25 hover:text-white transition-colors"
                   data-testid={`link-social-${s.toLowerCase()}`}>{s}</a>
               ))}
             </div>
