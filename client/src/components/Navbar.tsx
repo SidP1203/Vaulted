@@ -1,84 +1,76 @@
 import { useState, useEffect, useRef } from "react";
 import { Menu, X } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
 const navItems = [
-  { label: "Services",     id: "services"     },
-  { label: "Work",         id: "work"         },
-  { label: "Capabilities", id: "capabilities" },
-  { label: "Pricing",      id: "pricing"      },
+  { label: "works",    id: "works"    },
+  { label: "studio",   id: "studio"   },
+  { label: "services", id: "services" },
+  { label: "process",  id: "process"  },
 ];
 
+function scrollToId(id: string) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  el.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+}
+
 export function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const reduce = useReducedMotion();
 
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 10);
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Lock body scroll while mobile menu is open
   useEffect(() => {
     document.body.style.overflow = isMobileMenuOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [isMobileMenuOpen]);
 
-  // Focus management for the mobile menu dialog (a11y rule: focus-management)
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const dialogFirstFocusableRef = useRef<HTMLButtonElement>(null);
+  const firstFocusableRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (isMobileMenuOpen) {
-      // Move focus into the dialog
-      const id = window.setTimeout(() => dialogFirstFocusableRef.current?.focus(), 50);
+      const id = window.setTimeout(() => firstFocusableRef.current?.focus(), 50);
       return () => window.clearTimeout(id);
-    } else {
-      // Restore focus to the trigger when closing
-      triggerRef.current?.focus();
     }
+    triggerRef.current?.focus();
   }, [isMobileMenuOpen]);
 
-  const scrollToSection = (id: string) => {
+  const handleNav = (id: string) => {
     setIsMobileMenuOpen(false);
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    const reduceNow = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (id === "top") {
+      window.scrollTo({ top: 0, behavior: reduceNow ? "auto" : "smooth" });
+    } else {
+      scrollToId(id);
+    }
   };
 
   return (
     <>
-      <motion.nav
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: [0.25, 1, 0.5, 1] }}
-        className="fixed top-0 left-0 right-0 z-50 transition-[background,border,backdrop-filter] duration-300"
-        style={{
-          background: isScrolled ? "hsl(var(--ink-1) / 0.78)" : "transparent",
-          borderBottom: `1px solid ${isScrolled ? "hsl(var(--paper) / 0.08)" : "transparent"}`,
-          backdropFilter: isScrolled ? "blur(18px) saturate(140%)" : "none",
-          WebkitBackdropFilter: isScrolled ? "blur(18px) saturate(140%)" : "none",
-        }}
+      <nav
         aria-label="Primary"
+        className="fixed top-0 left-0 right-0 z-50 bg-[hsl(var(--paper)/0.85)] backdrop-blur-md"
+        style={{ borderBottom: "1px solid hsl(var(--ink-1) / 0.06)" }}
       >
         <div className="container-x">
           <div className="flex items-center justify-between h-16">
-            {/* Logo */}
+            {/* Logo — 44px min */}
             <button
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="text-[17px] font-semibold text-white tracking-tight rounded px-1"
+              onClick={() => handleNav("top")}
+              className="flex items-center gap-2 text-[16px] font-semibold t-primary tracking-tight min-h-11 px-2 -mx-2"
               data-testid="button-logo"
               aria-label="Vaulted home"
             >
-              Vaulted<span className="t-quaternary">.</span>
+              vaulted<span className="inline-block w-1.5 h-1.5 rounded-full bg-hot translate-y-[2px]" aria-hidden />
             </button>
 
-            {/* Desktop nav — centered */}
-            <div className="hidden lg:flex items-center gap-7 absolute left-1/2 -translate-x-1/2">
+            {/* Desktop nav — 44px min */}
+            <div className="hidden lg:flex items-center gap-2">
               {navItems.map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => scrollToSection(item.id)}
-                  className="text-[14px] text-white/70 hover:text-white transition-colors duration-150 rounded px-1 py-1"
+                  onClick={() => handleNav(item.id)}
+                  className="text-[14px] t-secondary hover:t-primary transition-colors duration-150 min-h-11 px-3 inline-flex items-center"
                   data-testid={`nav-${item.id}`}
                 >
                   {item.label}
@@ -86,19 +78,20 @@ export function Navbar() {
               ))}
             </div>
 
-            {/* CTA (one primary action) */}
+            {/* CTA — 44px min */}
             <button
-              onClick={() => scrollToSection("contact")}
-              className="hidden lg:inline-flex items-center gap-2 px-5 py-2 text-[14px] font-medium bg-white text-black rounded-full hover:bg-white/90 active:scale-[0.97] transition-all min-h-[40px]"
+              onClick={() => handleNav("contact")}
+              className="hidden lg:inline-flex items-center gap-2 text-[14px] font-medium t-primary min-h-11 px-2 -mr-2"
               data-testid="nav-contact"
             >
-              Start a project
+              <span className="inline-block w-2 h-2 rounded-full bg-hot pulse-dot" aria-hidden />
+              let's talk
             </button>
 
-            {/* Mobile toggle */}
+            {/* Mobile toggle — 44px target */}
             <button
               ref={triggerRef}
-              className="lg:hidden p-2 -mr-2 text-white rounded"
+              className="lg:hidden inline-flex items-center justify-center w-11 h-11 -mr-2 t-primary"
               onClick={() => setIsMobileMenuOpen(v => !v)}
               data-testid="button-mobile-menu"
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
@@ -109,9 +102,9 @@ export function Navbar() {
             </button>
           </div>
         </div>
-      </motion.nav>
+      </nav>
 
-      {/* Full-screen mobile overlay */}
+      {/* Mobile dialog */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
@@ -119,33 +112,36 @@ export function Navbar() {
             role="dialog"
             aria-modal="true"
             aria-label="Site navigation"
-            initial={{ opacity: 0 }}
+            initial={reduce ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-40 lg:hidden flex flex-col surface-sunken"
+            exit={reduce ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: reduce ? 0 : 0.2 }}
+            className="fixed inset-0 z-40 lg:hidden flex flex-col bg-[hsl(var(--paper))]"
             onKeyDown={(e) => { if (e.key === "Escape") setIsMobileMenuOpen(false); }}
           >
-            <div className="flex items-center justify-between px-6 py-4 hairline-bottom">
-              <span className="text-[17px] font-semibold text-white">Vaulted<span className="t-quaternary">.</span></span>
+            <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: "1px solid hsl(var(--ink-1) / 0.06)" }}>
+              <span className="flex items-center gap-2 text-[16px] font-semibold t-primary">
+                vaulted<span className="inline-block w-1.5 h-1.5 rounded-full bg-hot translate-y-[2px]" aria-hidden />
+              </span>
               <button
-                ref={dialogFirstFocusableRef}
+                ref={firstFocusableRef}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="p-2 text-white rounded"
+                className="inline-flex items-center justify-center w-11 h-11 t-primary"
                 aria-label="Close menu"
               >
                 <X size={22} />
               </button>
             </div>
             <div className="flex-1 flex flex-col justify-center px-8 gap-1">
-              {[...navItems, { label: "Start a project", id: "contact" }].map((item, idx) => (
+              {[...navItems, { label: "let's talk", id: "contact" }].map((item, idx) => (
                 <motion.button
                   key={item.id}
-                  initial={{ opacity: 0, y: 16 }}
+                  initial={reduce ? false : { opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.06, duration: 0.35, ease: [0.25, 1, 0.5, 1] }}
-                  onClick={() => scrollToSection(item.id)}
-                  className="text-left text-[32px] font-medium text-white py-4 hairline-bottom rounded"
+                  transition={{ delay: reduce ? 0 : idx * 0.06, duration: reduce ? 0 : 0.3, ease: [0.25, 1, 0.5, 1] }}
+                  onClick={() => handleNav(item.id)}
+                  className="text-left display-3 t-primary py-4 min-h-11"
+                  style={{ borderBottom: "1px solid hsl(var(--ink-1) / 0.08)" }}
                 >
                   {item.label}
                 </motion.button>
