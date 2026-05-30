@@ -123,23 +123,35 @@ function ScatterImage({
       className={`relative ${className}`}
       style={style}
     >
-      <div className="relative overflow-hidden">
+      <div className="relative overflow-hidden w-full h-full">
         <img src={src} alt={alt} loading="lazy" className="w-full h-full object-cover block" />
+        {/* contrast scrim so white caption is always legible */}
+        {caption && (
+          <div
+            aria-hidden
+            className="absolute inset-x-0 pointer-events-none"
+            style={
+              caption.pos === "tl" || caption.pos === "tr"
+                ? { top: 0, height: "45%", background: "linear-gradient(to bottom, rgba(0,0,0,0.55), transparent)" }
+                : { bottom: 0, height: "45%", background: "linear-gradient(to top, rgba(0,0,0,0.6), transparent)" }
+            }
+          />
+        )}
+        {caption && (
+          <figcaption
+            className={`absolute text-[12px] leading-tight ${
+              caption.pos === "tl" ? "top-3 left-3" :
+              caption.pos === "tr" ? "top-3 right-3 text-right" :
+              caption.pos === "bl" ? "bottom-3 left-3" :
+                                     "bottom-3 right-3 text-right"
+            }`}
+            style={{ color: "hsl(var(--paper))" }}
+          >
+            <span className="block font-medium">{caption.label}</span>
+            {caption.sub && <span className="block opacity-85">{caption.sub}</span>}
+          </figcaption>
+        )}
       </div>
-      {caption && (
-        <figcaption
-          className={`absolute text-[12px] leading-tight ${
-            caption.pos === "tl" ? "top-3 left-3" :
-            caption.pos === "tr" ? "top-3 right-3 text-right" :
-            caption.pos === "bl" ? "bottom-3 left-3" :
-                                   "bottom-3 right-3 text-right"
-          }`}
-          style={{ color: "hsl(var(--paper))", textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}
-        >
-          <span className="block font-medium">{caption.label}</span>
-          {caption.sub && <span className="block opacity-80">{caption.sub}</span>}
-        </figcaption>
-      )}
     </motion.figure>
   );
 }
@@ -176,65 +188,69 @@ function Hero() {
           <StaggerText text="Vaulted." />
         </motion.h1>
 
-        {/* Asymmetric scatter — desktop (lg+ only so absolute coords don't clip) */}
-        <div className="hidden lg:block relative h-[480px] mt-12">
-          {/* Mission statement (bottom right, huge) */}
-          <Reveal delay={0.3} className="absolute right-0 bottom-0 max-w-[820px] text-right">
-            <p className="display-2 t-primary text-balance">
-              <StaggerText text="A small studio building hand-coded websites at the intersection of design, code, and care." />
-            </p>
-          </Reveal>
+        {/* Asymmetric scatter — desktop (lg+ only). Image cluster, then mission row below. */}
+        <div className="hidden lg:block mt-14">
+          {/* Image cluster — images live in their own zone, no text underneath */}
+          <div className="relative h-[300px]">
+            {/* Scatter image 1 — top left */}
+            <ScatterImage
+              src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=900&q=80"
+              alt="Recent project — CSEL Cincinnati"
+              className="absolute top-0 left-0 w-[280px] h-[200px]"
+              delay={0.15}
+              rotate={-1.5}
+            />
 
-          {/* Scatter image 1 — top left */}
-          <ScatterImage
-            src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=900&q=80"
-            alt="Recent project — CSEL Cincinnati"
-            className="absolute top-0 left-0 w-[280px] h-[200px]"
-            delay={0.15}
-            rotate={-1.5}
-          />
+            {/* Caption next to scatter 1 */}
+            <Reveal delay={0.4} className="absolute top-[212px] left-0 max-w-[220px]">
+              <p className="text-[14px] leading-snug t-primary">
+                recent &nbsp;<span className="t-tertiary">— CSEL Cincinnati</span>
+              </p>
+            </Reveal>
 
-          {/* Caption next to scatter 1 */}
-          <Reveal delay={0.4} className="absolute top-[210px] left-[14px] max-w-[200px]">
-            <p className="text-[14px] leading-snug t-primary">
-              recent &nbsp;<span className="t-tertiary">— CSEL Cincinnati</span>
-            </p>
-          </Reveal>
+            {/* Scatter image 2 — middle */}
+            <ScatterImage
+              src="https://images.unsplash.com/photo-1559028012-481c04fa702d?auto=format&fit=crop&w=900&q=80"
+              alt="Design detail"
+              className="absolute top-[20px] left-[360px] w-[200px] h-[260px]"
+              delay={0.25}
+              rotate={2}
+            />
 
-          {/* Scatter image 2 — middle */}
-          <ScatterImage
-            src="https://images.unsplash.com/photo-1559028012-481c04fa702d?auto=format&fit=crop&w=900&q=80"
-            alt="Design detail"
-            className="absolute top-[80px] left-[420px] w-[200px] h-[260px]"
-            delay={0.25}
-            rotate={2}
-          />
+            {/* Small caption */}
+            <Reveal delay={0.45} className="absolute top-[24px] left-[600px] max-w-[180px]">
+              <p className="text-[14px] leading-snug t-primary">
+                hand-coded <br /><span className="t-tertiary">no templates, ever</span>
+              </p>
+            </Reveal>
 
-          {/* Small caption */}
-          <Reveal delay={0.45} className="absolute top-[20px] left-[660px] max-w-[170px]">
-            <p className="text-[14px] leading-snug t-primary">
-              hand-coded <br /><span className="t-tertiary">no templates, ever</span>
-            </p>
-          </Reveal>
+            {/* Tiny accent square */}
+            <motion.div
+              initial={reduce ? false : { scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.6, duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
+              className="absolute top-[140px] left-[610px] w-4 h-4 bg-[hsl(var(--ink-1))]"
+            />
+          </div>
 
-          {/* Tiny accent square */}
-          <motion.div
-            initial={reduce ? false : { scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.6, duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
-            className="absolute top-[180px] left-[820px] w-4 h-4 bg-[hsl(var(--ink-1))]"
-          />
+          {/* Mission + CTA row — normal flow, right-aligned statement, never overlaps */}
+          <div className="flex items-end justify-between gap-12 mt-12">
+            <Reveal delay={0.5} className="shrink-0">
+              <button
+                onClick={() => scrollToId("contact")}
+                className="btn"
+                data-testid="hero-cta"
+              >
+                <HotDot size={9} /> Start a project
+              </button>
+            </Reveal>
 
-          {/* CTA — bottom left */}
-          <Reveal delay={0.5} className="absolute left-0 bottom-2">
-            <button
-              onClick={() => scrollToId("contact")}
-              className="btn"
-              data-testid="hero-cta"
-            >
-              <HotDot size={9} /> Start a project
-            </button>
-          </Reveal>
+            <Reveal delay={0.3} className="max-w-[820px] text-right">
+              <p className="display-2 t-primary text-balance">
+                <StaggerText text="A small studio building hand-coded websites at the intersection of design, code, and care." />
+              </p>
+            </Reveal>
+          </div>
         </div>
 
         {/* Mobile + tablet — stacked */}
