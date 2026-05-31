@@ -151,10 +151,11 @@ function MockupCard() {
 function TiltDemo() {
   const cardRef = useRef<HTMLDivElement>(null);
   const rawX = useMotionValue(0), rawY = useMotionValue(0);
-  const rotateX = useSpring(useTransform(rawY, [-0.5, 0.5], [14, -14]), { stiffness: 280, damping: 28 });
-  const rotateY = useSpring(useTransform(rawX, [-0.5, 0.5], [-14, 14]), { stiffness: 280, damping: 28 });
-  const glowX = useSpring(useTransform(rawX, [-0.5, 0.5], [0, 100]), { stiffness: 200, damping: 30 });
-  const glowY = useSpring(useTransform(rawY, [-0.5, 0.5], [0, 100]), { stiffness: 200, damping: 30 });
+  const SPRING = { stiffness: 420, damping: 22, mass: 0.4 };
+  const rotateX = useSpring(useTransform(rawY, [-0.5, 0.5], [26, -26]), SPRING);
+  const rotateY = useSpring(useTransform(rawX, [-0.5, 0.5], [-26, 26]), SPRING);
+  const glowX = useSpring(useTransform(rawX, [-0.5, 0.5], [0, 100]), { stiffness: 300, damping: 30 });
+  const glowY = useSpring(useTransform(rawY, [-0.5, 0.5], [0, 100]), { stiffness: 300, damping: 30 });
   function onMove(e: React.MouseEvent<HTMLDivElement>) {
     if (!cardRef.current) return;
     const r = cardRef.current.getBoundingClientRect();
@@ -163,20 +164,23 @@ function TiltDemo() {
   }
   return (
     <div ref={cardRef} onMouseMove={onMove} onMouseLeave={() => { rawX.set(0); rawY.set(0); }}
-      className="w-full h-full flex items-center justify-center" style={{ perspective: 1000 }}>
-      <motion.div style={{ rotateX, rotateY, transformStyle: "preserve-3d" }} className="relative w-36 h-44">
-        <div className="absolute inset-0 bg-white/8 border border-white/15 flex flex-col items-center justify-center gap-3">
-          <motion.div animate={{ scale: [1, 1.05, 1] }} transition={{ repeat: Infinity, duration: 3 }}
-            className="w-10 h-10 rounded-full bg-white/20" />
-          <div className="w-20 h-2 bg-white/20" />
-          <div className="w-14 h-2 bg-white/10" />
+      className="w-full h-full flex items-center justify-center p-5" style={{ perspective: 800 }}>
+      <motion.div style={{ rotateX, rotateY, transformStyle: "preserve-3d" }} className="relative w-full h-full">
+        {/* Main panel — fills the box */}
+        <div className="absolute inset-0 bg-white/[0.07] border border-white/15 flex flex-col items-center justify-center gap-4"
+          style={{ transform: "translateZ(0px)" }}>
+          <motion.div animate={{ scale: [1, 1.06, 1] }} transition={{ repeat: Infinity, duration: 3 }}
+            className="w-16 h-16 rounded-full bg-white/20" style={{ transform: "translateZ(40px)" }} />
+          <div className="w-32 h-2.5 bg-white/20" style={{ transform: "translateZ(28px)" }} />
+          <div className="w-24 h-2.5 bg-white/10" style={{ transform: "translateZ(28px)" }} />
         </div>
-        <div className="absolute -top-4 -right-4 w-14 h-14 border border-white/20 bg-white/5"
-          style={{ transform: "translateZ(32px)" }} />
-        <div className="absolute -bottom-3 -left-3 w-9 h-9 bg-white/8 border border-white/15"
-          style={{ transform: "translateZ(18px)" }} />
+        {/* Floating depth layers — pushed toward corners */}
+        <div className="absolute top-4 right-4 w-20 h-20 border border-white/25 bg-white/5"
+          style={{ transform: "translateZ(70px)" }} />
+        <div className="absolute bottom-4 left-4 w-14 h-14 bg-white/[0.09] border border-white/15"
+          style={{ transform: "translateZ(44px)" }} />
         <motion.div className="absolute inset-0 pointer-events-none"
-          style={{ background: `radial-gradient(circle at ${glowX}% ${glowY}%, rgba(255,255,255,0.14) 0%, transparent 65%)`, transform: "translateZ(1px)" }} />
+          style={{ background: `radial-gradient(circle at ${glowX}% ${glowY}%, rgba(255,255,255,0.18) 0%, transparent 60%)`, transform: "translateZ(2px)" }} />
       </motion.div>
     </div>
   );
@@ -263,16 +267,15 @@ function CounterDemo() {
 function ParallaxDemo() {
   const ref = useRef<HTMLDivElement>(null);
   const mx = useMotionValue(0), my = useMotionValue(0);
-  const fX = useSpring(useTransform(mx, [-0.5, 0.5], [-28, 28]), { stiffness: 130, damping: 20 });
-  const fY = useSpring(useTransform(my, [-0.5, 0.5], [-28, 28]), { stiffness: 130, damping: 20 });
-  const mX = useSpring(useTransform(mx, [-0.5, 0.5], [-14, 14]), { stiffness: 100, damping: 22 });
-  const mY = useSpring(useTransform(my, [-0.5, 0.5], [-14, 14]), { stiffness: 100, damping: 22 });
-  const bX = useSpring(useTransform(mx, [-0.5, 0.5], [-5, 5]), { stiffness: 80, damping: 24 });
-  const bY = useSpring(useTransform(my, [-0.5, 0.5], [-5, 5]), { stiffness: 80, damping: 24 });
-  const aX = useSpring(useTransform(mx, [-0.5, 0.5], [18, -18]), { stiffness: 90, damping: 18 });
-  const aY = useSpring(useTransform(my, [-0.5, 0.5], [18, -18]), { stiffness: 90, damping: 18 });
-  const cX = useSpring(useTransform(mx, [-0.5, 0.5], [-22, 22]), { stiffness: 70, damping: 16 });
-  const cY = useSpring(useTransform(my, [-0.5, 0.5], [22, -22]), { stiffness: 70, damping: 16 });
+  const sp = (range: number, stiffness: number, damping: number) =>
+    useSpring(useTransform(mx, [-0.5, 0.5], [-range, range]), { stiffness, damping, mass: 0.5 });
+  const spY = (range: number, stiffness: number, damping: number) =>
+    useSpring(useTransform(my, [-0.5, 0.5], [-range, range]), { stiffness, damping, mass: 0.5 });
+  const fX = sp(64, 260, 18),  fY = spY(64, 260, 18);
+  const mX = sp(38, 220, 20),  mY = spY(38, 220, 20);
+  const bX = sp(16, 180, 22),  bY = spY(16, 180, 22);
+  const aX = sp(-48, 200, 16), aY = spY(-48, 200, 16);
+  const cX = sp(-56, 170, 15), cY = spY(56, 170, 15);
   function onMove(e: React.MouseEvent<HTMLDivElement>) {
     if (!ref.current) return;
     const r = ref.current.getBoundingClientRect();
@@ -282,11 +285,11 @@ function ParallaxDemo() {
   return (
     <div ref={ref} onMouseMove={onMove} onMouseLeave={() => { mx.set(0); my.set(0); }}
       className="w-full h-full flex items-center justify-center relative overflow-hidden">
-      <motion.div style={{ x: bX, y: bY }} className="absolute w-40 h-40 border border-white/15" />
-      <motion.div style={{ x: mX, y: mY }} className="absolute w-24 h-24 border border-white/20 bg-white/5" />
-      <motion.div style={{ x: fX, y: fY }} className="absolute w-12 h-12 bg-white/80" />
-      <motion.div style={{ x: aX, y: aY }} className="absolute w-6 h-6 border border-white/20 top-[calc(50%-40px)] left-[calc(50%+36px)]" />
-      <motion.div style={{ x: cX, y: cY }} className="absolute w-5 h-5 bg-white/15 bottom-[calc(50%-40px)] left-[calc(50%-50px)]" />
+      <motion.div style={{ x: bX, y: bY }} className="absolute w-64 h-64 border border-white/15" />
+      <motion.div style={{ x: mX, y: mY }} className="absolute w-40 h-40 border border-white/20 bg-white/5" />
+      <motion.div style={{ x: fX, y: fY }} className="absolute w-20 h-20 bg-white/80" />
+      <motion.div style={{ x: aX, y: aY }} className="absolute w-12 h-12 border border-white/25 top-[18%] right-[16%]" />
+      <motion.div style={{ x: cX, y: cY }} className="absolute w-10 h-10 bg-white/15 bottom-[16%] left-[14%]" />
     </div>
   );
 }
